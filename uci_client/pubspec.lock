@@ -176,6 +176,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0"
+  dots_indicator:
+    dependency: transitive
+    description:
+      name: dots_indicator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   eosdart:
     dependency: "direct main"
     description:
@@ -279,6 +286,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.4"
+  introduction_screen:
+    dependency: "direct main"
+    description:
+      name: introduction_screen
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.8"
   io:
     dependency: transitive
     description:
@@ -461,13 +475,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.3"
-  sk_onboarding_screen:
-    dependency: "direct main"
-    description:
-      name: sk_onboarding_screen
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
   sky_engine:
     dependency: transitive
     description: flutter
