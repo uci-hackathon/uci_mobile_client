@@ -1,17 +1,10 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
-import '../repository/models/models.dart';
-import '../router.gr.dart';
+class WalkthroughPage extends StatelessWidget {
+  Function onDone;
 
-class OnboardingPage extends StatefulWidget {
-  @override
-  _OnboardingPageState createState() => _OnboardingPageState();
-}
-
-class _OnboardingPageState extends State<OnboardingPage> {
-  var _pageIndex = 0;
+  WalkthroughPage({this.onDone});
 
   List<PageViewModel> _onboardingPages(BuildContext context) {
     final pageDecoration = PageDecoration(
@@ -53,34 +46,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _pageIndex,
-        children: <Widget>[
-          _landingScreen(),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Text(
-                'Who are you?',
-                style: Theme.of(context).textTheme.headline4,
-              ),
-              _buildButtons(),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _landingScreen() {
     return IntroductionScreen(
       pages: _onboardingPages(context),
       done: const Text(
         'Done',
         style: TextStyle(fontWeight: FontWeight.w600),
       ),
-      onDone: () {},
+      onDone: onDone,
       dotsDecorator: DotsDecorator(
         size: const Size.square(10.0),
         activeSize: const Size(20.0, 10.0),
@@ -92,20 +64,5 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ),
       ),
     );
-  }
-
-  Widget _buildButtons() {
-    return Column(
-        children: AccountType.values
-            .map((e) => RaisedButton(
-                  onPressed: () => ExtendedNavigator.rootNavigator.pushNamed(
-                    Routes.homePage,
-                    arguments: e,
-                  ),
-                  child: Text(
-                    e.toString().split('.').last.toUpperCase(),
-                  ),
-                ))
-            .toList());
   }
 }
