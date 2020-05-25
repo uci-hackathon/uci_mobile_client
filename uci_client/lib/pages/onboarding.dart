@@ -24,10 +24,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             children: <Widget>[
               Text(
                 'Who are you?',
-                style: Theme.of(context)
-                    .textTheme
-                    .headline4
-                    .apply(color: Colors.white),
+                style: Theme.of(context).textTheme.headline4,
               ),
               _buildButtons(),
             ],
@@ -44,14 +41,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
         children: <Widget>[
           Text(
             'UCI\nUniversal Creator Income',
-            style: Theme.of(context)
-                .textTheme
-                .headline4
-                .apply(color: Colors.white),
+            style: Theme.of(context).textTheme.headline4,
           ),
-          RaisedButton(
-            child: Text('NEXT'),
-            onPressed: () => setState(() => _pageIndex = 1),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            width: double.infinity,
+            child: RaisedButton(
+              child: Text('Get started'),
+              onPressed: () => setState(() => _pageIndex = 1),
+            ),
           ),
         ],
       ),

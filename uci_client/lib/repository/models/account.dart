@@ -2,6 +2,7 @@ enum AccountType { creator, backer, organization }
 
 class Account {
   String fullName;
-  double latitude;
-  double longitude;
+  String location;
+  String avatar;
+  Map<String, dynamic> social;
 }

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 final uciTheme = ThemeData(
   splashColor: Colors.amber,
-  canvasColor: Colors.black45,
-  brightness: Brightness.dark,
-  highlightColor: Colors.black45,
+  canvasColor: Colors.white,
+  brightness: Brightness.light,
+  highlightColor: Colors.white,
   accentColor: Colors.amber,
 //  textTheme: TextTheme(
 //    overline: smallTextStyle,
@@ -17,7 +17,7 @@ final uciTheme = ThemeData(
   textSelectionHandleColor: Colors.amberAccent,
   primarySwatch: Colors.grey,
   buttonColor: Colors.amber,
-  primaryIconTheme: IconThemeData(color: Colors.white),
-  cardColor: Colors.black,
-  scaffoldBackgroundColor: Colors.black,
+  primaryIconTheme: IconThemeData(color: Colors.black),
+  cardColor: Colors.white,
+  scaffoldBackgroundColor: Colors.white,
 );
