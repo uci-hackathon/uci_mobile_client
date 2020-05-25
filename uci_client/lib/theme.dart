@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+final _uciColor = Color.fromARGB(255, 5, 0, 255);
+
 final uciTheme = ThemeData(
-  splashColor: Colors.amber,
+  splashColor: _uciColor,
   canvasColor: Colors.white,
   brightness: Brightness.light,
   highlightColor: Colors.white,
-  accentColor: Colors.amber,
+  accentColor: _uciColor,
 //  textTheme: TextTheme(
 //    overline: smallTextStyle,
 //    display1: titleStyle,
@@ -13,10 +15,10 @@ final uciTheme = ThemeData(
 //    body1: textStyle,
 //    body2: clickableTextStyle,
 //  ),
-  textSelectionColor: Colors.amber,
-  textSelectionHandleColor: Colors.amberAccent,
+  textSelectionColor: _uciColor,
+  textSelectionHandleColor: _uciColor,
   primarySwatch: Colors.grey,
-  buttonColor: Colors.amber,
+  buttonColor: _uciColor,
   primaryIconTheme: IconThemeData(color: Colors.black),
   cardColor: Colors.white,
   scaffoldBackgroundColor: Colors.white,

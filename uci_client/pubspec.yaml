@@ -70,5 +70,6 @@ flutter:
         - asset: assets/fonts/Favorit/FavoritTrial-Bold.otf
           weight: 900
 
-    assets:
-      - assets/
+  assets:
+    - assets/uci.png
+    - assets/

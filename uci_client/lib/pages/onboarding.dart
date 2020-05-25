@@ -13,32 +13,43 @@ class OnboardingPage extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPage> {
   var _pageIndex = 0;
 
-  final _onboardingPages = [
-    PageViewModel(
-      title: '',
-      body:
-          "Here you can write the description of the page, to explain someting...",
-      image: Center(
-        child: Image.network("https://domaine.com/image.png", height: 175.0),
+  List<PageViewModel> _onboardingPages(BuildContext context) {
+    final pageDecoration = PageDecoration(
+      titleTextStyle: Theme.of(context).textTheme.headline4.copyWith(
+            fontFamily: 'FavoritStd',
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+    );
+
+    return [
+      PageViewModel(
+        title: 'Universal Creator Income',
+        body:
+            'A Decentralised Autonomous Organisation (DAO) for the advancement of culture, where elected custodians curate the allocation of funds to foster creativity worldwide.',
+        image: Center(
+          child: Image.asset('assets/uci.png', height: 175.0),
+        ),
+        decoration: pageDecoration,
       ),
-    ),
-    PageViewModel(
-      title: "Title of first page",
-      body:
-          "Here you can write the description of the page, to explain someting...",
-      image: Center(
-        child: Image.network("https://domaine.com/image.png", height: 175.0),
+      PageViewModel(
+        title: "Title of first page",
+        body:
+            "Here you can write the description of the page, to explain someting...",
+        image: Center(
+          child: Image.network("https://domaine.com/image.png", height: 175.0),
+        ),
       ),
-    ),
-    PageViewModel(
-      title: "Title of first page",
-      body:
-          "Here you can write the description of the page, to explain someting...",
-      image: Center(
-        child: Image.network("https://domaine.com/image.png", height: 175.0),
+      PageViewModel(
+        title: "Title of first page",
+        body:
+            "Here you can write the description of the page, to explain someting...",
+        image: Center(
+          child: Image.network("https://domaine.com/image.png", height: 175.0),
+        ),
       ),
-    ),
-  ];
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +75,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   Widget _landingScreen() {
     return IntroductionScreen(
-      pages: _onboardingPages,
+      pages: _onboardingPages(context),
       done: const Text(
         'Done',
         style: TextStyle(fontWeight: FontWeight.w600),
