@@ -5,6 +5,9 @@ import 'pages/pages.dart';
 @MaterialAutoRouter()
 class $Router {
   @initial
+  RootPage rootPage;
+
+  @MaterialRoute()
   HomePage homePage;
 
   @MaterialRoute()

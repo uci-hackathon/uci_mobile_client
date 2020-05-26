@@ -67,6 +67,7 @@ final uciTheme = ThemeData(
     },
   ),
   buttonColor: _secondaryColor,
+  iconTheme: IconThemeData(color: Colors.black, opacity: 1.0),
   primaryIconTheme: IconThemeData(color: Colors.black),
   cardColor: Colors.white,
   scaffoldBackgroundColor: Colors.white,

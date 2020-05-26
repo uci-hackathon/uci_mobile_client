@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'pages.dart';
 
-class HomePage extends StatelessWidget {
+class RootPage extends StatelessWidget {
   final future = Hive.initFlutter();
 
   @override
@@ -13,8 +13,9 @@ class HomePage extends StatelessWidget {
       future: future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          return SignUpPage();
-//          return OnboardingPage();
+          return HomePage();
+//          return SignUpPage();
+          return OnboardingPage();
         }
 
         return Scaffold(
