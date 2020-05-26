@@ -19,27 +19,29 @@ class WalkthroughPage extends StatelessWidget {
       PageViewModel(
         title: 'Universal Creator Income',
         body:
-            'A Decentralised Autonomous Organisation (DAO) for the advancement of culture, where elected custodians curate the allocation of funds to foster creativity worldwide.',
+            'An alternative economic infrastructure to fund creators who produce the beauty in our world.',
         image: Center(
-          child: Image.asset('assets/uci.png', height: 175.0),
+          child: Image.asset('assets/onboard1.png', height: 175.0),
         ),
         decoration: pageDecoration,
       ),
       PageViewModel(
-        title: "Title of first page",
+        title: 'Empowering creators worldwide',
         body:
-            "Here you can write the description of the page, to explain someting...",
+            'Creativity is key to advancement of humanity and we need to foster innovation across borders.',
         image: Center(
-          child: Image.network("https://domaine.com/image.png", height: 175.0),
+          child: Image.asset('assets/onboard2.png', height: 175.0),
         ),
+        decoration: pageDecoration,
       ),
       PageViewModel(
-        title: "Title of first page",
+        title: 'A Decentralized Organization',
         body:
-            "Here you can write the description of the page, to explain someting...",
+            'Neutrality and transparency in governance to offer more fair and distributed forms of curation.',
         image: Center(
-          child: Image.network("https://domaine.com/image.png", height: 175.0),
+          child: Image.asset('assets/onboard3.png', height: 175.0),
         ),
+        decoration: pageDecoration,
       ),
     ];
   }

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-final _uciColor = Color.fromARGB(255, 5, 0, 255);
+final _primaryColor = Color.fromARGB(255, 5, 0, 255);
+final _secondaryColor = Color.fromARGB(255, 77, 190, 80);
 
 final uciTheme = ThemeData(
-  splashColor: _uciColor,
+  splashColor: _primaryColor,
   canvasColor: Colors.white,
   brightness: Brightness.light,
-  highlightColor: Colors.white,
-  accentColor: _uciColor,
+  highlightColor: _primaryColor,
+  accentColor: _primaryColor,
 //  textTheme: TextTheme(
 //    overline: smallTextStyle,
 //    display1: titleStyle,
@@ -15,8 +16,9 @@ final uciTheme = ThemeData(
 //    body1: textStyle,
 //    body2: clickableTextStyle,
 //  ),
-  textSelectionColor: _uciColor,
-  textSelectionHandleColor: _uciColor,
+  fontFamily: 'Favorit',
+  textSelectionColor: _primaryColor,
+  textSelectionHandleColor: _primaryColor,
   primarySwatch: MaterialColor(
     0xFFFFFFFF,
     <int, Color>{
@@ -32,7 +34,7 @@ final uciTheme = ThemeData(
       900: Color(0xFFFFFFFF),
     },
   ),
-  buttonColor: _uciColor,
+  buttonColor: _secondaryColor,
   primaryIconTheme: IconThemeData(color: Colors.black),
   cardColor: Colors.white,
   scaffoldBackgroundColor: Colors.white,

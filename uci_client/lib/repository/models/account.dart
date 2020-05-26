@@ -1,4 +1,4 @@
-enum AccountType { creator, backer, organization }
+enum AccountType { create, vote, nominate }
 
 class Account {
   String fullName;
