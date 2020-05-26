@@ -109,7 +109,6 @@ class _SignUpPageState extends State<SignUpPage> {
             FormBuilderValidators.required(),
             FormBuilderValidators.max(70),
           ],
-          textInputAction: TextInputAction.continueAction,
         ),
         SizedBox(height: 20),
         FormBuilderTextField(
