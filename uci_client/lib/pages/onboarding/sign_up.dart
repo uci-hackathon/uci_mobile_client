@@ -1,7 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:uci_client/repository/repository.dart';
 
+import '../../router.gr.dart';
 import '../../widgets.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -42,6 +46,28 @@ class _SignUpViewModel {
 class _SignUpPageState extends State<SignUpPage> {
   final _fbKey = GlobalKey<FormBuilderState>();
   var _buttonOpacity = 0.0;
+  var _isUsernameFree = true;
+
+  @override
+  void initState() {
+    Future.microtask(() async {
+      final prefs = Provider.of<Prefs>(context, listen: false);
+    });
+    super.initState();
+  }
+
+  void _onCreateAccountPressed(BuildContext context) async {
+    ExtendedNavigator.of(context).pushNamed(Routes.homePage);
+//    final prefs = Provider.of<Prefs>(context, listen: false);
+//    final api = Provider.of<UciApi>(context, listen: false);
+//
+//    final keys = AccountKeys.create();
+//    final acc =
+//        await api.createAccount(_fbKey.currentState.value['username'], keys);
+//    await prefs.setKeys(keys);
+//
+//    //set uci metadata
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +80,7 @@ class _SignUpPageState extends State<SignUpPage> {
           padding: const EdgeInsets.all(20.0),
           child: RaisedButton(
             onPressed: _buttonOpacity > 0.0
-                ? () {
-                    print(_fbKey.currentState.value);
-                  }
+                ? () => _onCreateAccountPressed(context)
                 : null,
             child: Text(
               'Create account',
@@ -126,6 +150,22 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
         SizedBox(height: 20),
         FormBuilderTextField(
+          onChanged: (username) async {
+            final u = username.toString();
+            if (u.length != 12) {
+              return;
+            }
+
+            try {
+              await Provider.of<UciApi>(context, listen: false)
+                  .fetchAccountByName(u);
+              setState(() {
+                _isUsernameFree = false;
+              });
+            } catch (e) {
+              _isUsernameFree = true;
+            }
+          },
           cursorColor: Colors.black,
           maxLines: 1,
           autocorrect: false,
@@ -137,6 +177,7 @@ class _SignUpPageState extends State<SignUpPage> {
             FormBuilderValidators.required(),
             FormBuilderValidators.minLength(12),
             FormBuilderValidators.maxLength(12),
+            (_) => _isUsernameFree ? null : 'Username is taken',
           ],
         ),
         SizedBox(height: 20),

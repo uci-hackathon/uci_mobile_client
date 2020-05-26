@@ -13,7 +13,7 @@ class RootPage extends StatelessWidget {
       future: future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          return HomePage();
+//          return HomePage();
 //          return SignUpPage();
           return OnboardingPage();
         }
