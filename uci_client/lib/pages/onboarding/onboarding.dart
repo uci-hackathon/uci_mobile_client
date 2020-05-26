@@ -1,7 +1,14 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../../router.gr.dart';
 import '../../widgets.dart';
 import 'pick_role.dart';
+import 'walkthrough.dart';
+
+export 'explain_role.dart';
+export 'pick_role.dart';
+export 'walkthrough.dart';
 
 class OnboardingPage extends StatefulWidget {
   @override
@@ -18,8 +25,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
       body: IndexedStack(
         index: _pageIndex,
         children: <Widget>[
-//          WalkthroughPage(onDone: () => setState(() => _pageIndex = 1)),
-          PickRolePage(onDone: (role) => setState(() => _pageIndex = 0)),
+          WalkthroughPage(onDone: () => setState(() => _pageIndex = 1)),
+          PickRolePage(
+            onDone: (role) => ExtendedNavigator.rootNavigator.pushNamed(
+              Routes.explainRolePage,
+              arguments: role,
+            ),
+          ),
         ],
       ),
     );

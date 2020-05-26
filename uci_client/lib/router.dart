@@ -6,4 +6,7 @@ import 'pages/pages.dart';
 class $Router {
   @initial
   HomePage homePage;
+
+  @MaterialRoute()
+  ExplainRolePage explainRolePage;
 }
