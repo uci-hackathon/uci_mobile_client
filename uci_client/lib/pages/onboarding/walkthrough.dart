@@ -8,11 +8,7 @@ class WalkthroughPage extends StatelessWidget {
 
   List<PageViewModel> _onboardingPages(BuildContext context) {
     final pageDecoration = PageDecoration(
-      titleTextStyle: Theme.of(context).textTheme.headline4.copyWith(
-            fontFamily: 'FavoritStd',
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
-          ),
+      titleTextStyle: Theme.of(context).textTheme.headline4,
     );
 
     return [
@@ -51,7 +47,7 @@ class WalkthroughPage extends StatelessWidget {
     return IntroductionScreen(
       pages: _onboardingPages(context),
       done: const Text(
-        'Done',
+        'Start',
         style: TextStyle(fontWeight: FontWeight.w600),
       ),
       onDone: onDone,

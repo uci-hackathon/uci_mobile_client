@@ -1,6 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 import '../../repository/models/models.dart';
+import '../../router.gr.dart';
 import '../../widgets.dart';
 
 class _ExplainRoleViewModel {
@@ -51,10 +53,7 @@ class ExplainRolePage extends StatelessWidget {
             Text(
               vm.title,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline3.apply(
-                    color: Colors.black,
-                    fontFamily: 'FavoritStd',
-                  ),
+              style: Theme.of(context).textTheme.headline4,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             Text(
@@ -71,12 +70,13 @@ class ExplainRolePage extends StatelessWidget {
                 highlightElevation: 0.0,
                 focusElevation: 0.0,
                 disabledElevation: 0.0,
-                onPressed: () {},
+                onPressed: () => ExtendedNavigator.rootNavigator.pushNamed(
+                  Routes.signUpPage,
+                  arguments: role,
+                ),
                 child: Text(
                   vm.buttonTitle,
-                  style: Theme.of(context).textTheme.button.apply(
-                        color: Colors.white,
-                      ),
+                  style: Theme.of(context).textTheme.button,
                 ),
               ),
             ),

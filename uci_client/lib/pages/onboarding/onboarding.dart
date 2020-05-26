@@ -8,6 +8,7 @@ import 'walkthrough.dart';
 
 export 'explain_role.dart';
 export 'pick_role.dart';
+export 'sign_up.dart';
 export 'walkthrough.dart';
 
 class OnboardingPage extends StatefulWidget {

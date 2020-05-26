@@ -3,19 +3,51 @@ import 'package:flutter/material.dart';
 final _primaryColor = Color.fromARGB(255, 5, 0, 255);
 final _secondaryColor = Color.fromARGB(255, 77, 190, 80);
 
+final oldTheme = ThemeData();
 final uciTheme = ThemeData(
+  cursorColor: _primaryColor,
   splashColor: _primaryColor,
   canvasColor: Colors.white,
   brightness: Brightness.light,
   highlightColor: _primaryColor,
   accentColor: _primaryColor,
-//  textTheme: TextTheme(
-//    overline: smallTextStyle,
-//    display1: titleStyle,
-//    title: clickableTextStyle,
-//    body1: textStyle,
-//    body2: clickableTextStyle,
-//  ),
+  textTheme: TextTheme(
+    headline1: oldTheme.textTheme.headline1.copyWith(
+      fontFamily: 'FavoritStd',
+      color: Colors.black,
+    ),
+    headline2: oldTheme.textTheme.headline2.copyWith(
+      fontFamily: 'FavoritStd',
+      color: Colors.black,
+    ),
+    headline3: oldTheme.textTheme.headline3.copyWith(
+      fontFamily: 'FavoritStd',
+      color: Colors.black,
+    ),
+    headline4: oldTheme.textTheme.headline4.copyWith(
+      fontFamily: 'FavoritStd',
+      color: Colors.black,
+      fontWeight: FontWeight.w500,
+    ),
+    headline5: oldTheme.textTheme.headline5.copyWith(
+      fontFamily: 'FavoritStd',
+      color: Colors.black,
+    ),
+    headline6: oldTheme.textTheme.headline6.copyWith(
+      fontFamily: 'FavoritStd',
+      color: Colors.black,
+    ),
+    button: oldTheme.textTheme.button.copyWith(
+      color: Colors.white,
+    ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    labelStyle: oldTheme.textTheme.overline.apply(color: Colors.black),
+    enabledBorder: OutlineInputBorder(),
+    border: OutlineInputBorder(),
+    focusedBorder: OutlineInputBorder(),
+    errorBorder: OutlineInputBorder(),
+  ),
   fontFamily: 'Favorit',
   textSelectionColor: _primaryColor,
   textSelectionHandleColor: _primaryColor,

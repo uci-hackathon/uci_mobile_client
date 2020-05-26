@@ -9,4 +9,7 @@ class $Router {
 
   @MaterialRoute()
   ExplainRolePage explainRolePage;
+
+  @MaterialRoute()
+  SignUpPage signUpPage;
 }

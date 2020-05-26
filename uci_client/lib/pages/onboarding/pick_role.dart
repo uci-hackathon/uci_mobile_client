@@ -19,9 +19,7 @@ class PickRolePage extends StatelessWidget {
           SizedBox(),
           Text(
             'Join the\nmovement',
-            style: Theme.of(context).textTheme.headline3.apply(
-                  color: Colors.black,
-                ),
+            style: Theme.of(context).textTheme.headline4,
             textAlign: TextAlign.start,
           ),
           Image.asset(
@@ -48,7 +46,6 @@ class PickRolePage extends StatelessWidget {
       children: AccountType.values
           .map((a) => Container(
                 width: double.infinity,
-//                padding: const EdgeInsets.all(5.0),
                 child: RaisedButton(
                   disabledElevation: 0.0,
                   focusElevation: 0.0,
@@ -58,9 +55,7 @@ class PickRolePage extends StatelessWidget {
                   onPressed: () => onDone(a),
                   child: Text(
                     captions[a],
-                    style: Theme.of(context).textTheme.button.apply(
-                          color: Colors.white,
-                        ),
+                    style: Theme.of(context).textTheme.button,
                   ),
                 ),
               ))
