@@ -34,8 +34,8 @@ class _SignUpViewModel {
     email = json[kEmail];
     links = List.generate(
       linksCount,
-      (i) => json[kLinks + (i + 1).toString()].toString(),
-    ).toList();
+      (i) => (json[kLinks + (i + 1).toString()] ?? '').toString(),
+    ).where((l) => l.isNotEmpty).toList();
   }
 }
 
@@ -53,7 +53,11 @@ class _SignUpPageState extends State<SignUpPage> {
           width: double.infinity,
           padding: const EdgeInsets.all(20.0),
           child: RaisedButton(
-            onPressed: _buttonOpacity > 0.0 ? () {} : null,
+            onPressed: _buttonOpacity > 0.0
+                ? () {
+                    print(_fbKey.currentState.value);
+                  }
+                : null,
             child: Text(
               'Create account',
               style: Theme.of(context).textTheme.button,
@@ -137,17 +141,22 @@ class _SignUpPageState extends State<SignUpPage> {
           ],
         ),
         SizedBox(height: 20),
-        FormBuilderDateTimePicker(
-          cursorColor: Colors.black,
-          attribute: _SignUpViewModel.kBirthDate,
-          inputType: InputType.date,
-          format: DateFormat('yyyy-MM-dd'),
-          decoration: InputDecoration(
-            labelText: 'Date of birth *',
+        Theme(
+          data: ThemeData(
+            inputDecorationTheme: Theme.of(context).inputDecorationTheme,
           ),
-          validators: [
-            FormBuilderValidators.required(),
-          ],
+          child: FormBuilderDateTimePicker(
+            cursorColor: Colors.black,
+            attribute: _SignUpViewModel.kBirthDate,
+            inputType: InputType.date,
+            format: DateFormat('yyyy-MM-dd'),
+            decoration: InputDecoration(
+              labelText: 'Date of birth *',
+            ),
+            validators: [
+              FormBuilderValidators.required(),
+            ],
+          ),
         ),
         SizedBox(height: 20),
         FormBuilderTextField(
