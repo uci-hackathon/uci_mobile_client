@@ -19,7 +19,7 @@ class Prefs {
     await _storage.write(key: _kOwnerKey, value: keys.owner.toString());
 
     if (keys.active != null) {
-      await _storage.write(key: _kOwnerKey, value: keys.active.toString());
+      await _storage.write(key: _kActiveKey, value: keys.active.toString());
     }
 
     return keys;

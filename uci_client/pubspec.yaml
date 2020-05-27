@@ -16,7 +16,9 @@ dependencies:
   hive_flutter: ^0.3.0+2
   auto_route: ^0.5.0
   flutter_secure_storage: ^3.3.3
-  eosdart: ^0.4.4
+  eosdart:
+    git: https://github.com/tapkain/eosdart.git
+
   provider: ^4.1.2
   flutter_form_builder: ^3.10.1
   introduction_screen: ^1.0.8

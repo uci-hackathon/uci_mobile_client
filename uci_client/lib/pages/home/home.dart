@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:uci_client/repository/repository.dart';
 
 import 'vote_router.gr.dart';
 
@@ -24,6 +26,26 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     ExtendedNavigator<VoteRouter>(router: VoteRouter());
+
+    Future.microtask(() async {
+      print('LOL');
+      try {
+        final api = Provider.of<UciApi>(context, listen: false);
+        final keys = AccountKeys.create();
+        final username = 'testor554111';
+        await api.createAccount(username, keys);
+        print('ACCOUNT CREATED');
+      } catch (e) {
+        if (e is Error) {
+          print(e.stackTrace.toString());
+        }
+        print(e.runtimeType.toString());
+        print('EXCEPTION!!!!');
+        print(e.toString());
+      }
+      print('LOL2');
+    });
+
     super.initState();
   }
 
