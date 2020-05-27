@@ -20,27 +20,23 @@ class UciApi {
   //2. write keys to prefs
   //3. create telos decide regvoter
   //4. write user metadata to uci contract
-  Future<eos.Account> createAccount(
-      UciAccount uciAccount, AccountKeys keys) async {
-    //await _createEosAccount(accountName, keys);
-    //await prefs.setKeys(keys);
+  Future<AccountKeys> createAccount(
+    UciAccount uciAccount,
+    AccountKeys keys,
+  ) async {
+    await _createEosAccount(uciAccount.username, keys);
+    await prefs.setKeys(keys);
 
     await _prepareKeys();
-//    final transaction = eos.Transaction()
-//      ..actions = [
-//        _buildCreateVoterAction(accountName),
-////        _buildUpsertMedatataAction(accountName, {'blabla': 'blabla'}),
-//      ];
-//
-//    await _eos.pushTransaction(transaction);
-
-    final transaction2 = eos.Transaction()
+    final transaction = eos.Transaction()
       ..actions = [
-//        _buildCreateVoterAction(accountName),
+        _buildCreateVoterAction(uciAccount.username),
         _buildUpsertMedatataAction(uciAccount),
       ];
 
-    await _eos.pushTransaction(transaction2);
+    await _eos.pushTransaction(transaction);
+
+    return keys;
   }
 
   Future<void> _createEosAccount(
@@ -89,14 +85,26 @@ class UciApi {
       };
   }
 
-  Future<Map<String, dynamic>> fetchMetadata() async {
-    final account = await fetchAccount();
-    return _eos.getTableRow(
-      'telos.decide',
-      account.accountName,
+  Future<UciAccount> fetchMetadata(String accountName) async {
+    final row = await _eos.getTableRow(
+      'uci',
+      accountName,
       'metadata',
-      tableKey: account.accountName,
+      tableKey: accountName,
     );
+
+    final acc = UciAccount.fromJson(row);
+    acc.username = accountName;
+    return acc;
+  }
+
+  Future<List<String>> fetchCustodians() async {
+    await Future.delayed(Duration(milliseconds: 3000));
+    return [
+      'pep',
+      'kek',
+      'ses',
+    ];
   }
 
   Future<eos.Account> fetchAccount() async {

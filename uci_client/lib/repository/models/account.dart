@@ -3,6 +3,8 @@ import 'package:eosdart_ecc/eosdart_ecc.dart';
 enum AccountType { create, vote, nominate }
 
 class UciAccount {
+  UciAccount({this.username});
+
   String firstName;
   String lastName;
   String username;
@@ -10,12 +12,21 @@ class UciAccount {
   String email;
   List<String> links;
 
+  UciAccount.fromJson(Map<String, dynamic> json) {
+    firstName = json['first_name'];
+    lastName = json['last_name'];
+    username = json['username'];
+    birthDate = DateTime.tryParse(json['birth_date']);
+    email = json['email'];
+    links = json['links'];
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'first_name': firstName,
       'last_name': lastName,
       'username': username,
-      'birth_date': birthDate.toIso8601String(),
+      'birth_date': birthDate?.toIso8601String(),
       'email': email,
       'links': links,
     };
