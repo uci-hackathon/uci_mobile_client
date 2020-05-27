@@ -22,6 +22,7 @@ class _CustodianViewModel {
 
 class _VotePageState extends State<VotePage> {
   List<_CustodianViewModel> _custodians;
+  var _buttonOpacity = 0.0;
 
   @override
   void initState() {
@@ -43,18 +44,40 @@ class _VotePageState extends State<VotePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: _buttonOpacity == 0.0
+          ? Container()
+          : AnimatedOpacity(
+              duration: Duration(milliseconds: 300),
+              opacity: _buttonOpacity,
+              child: Container(
+                padding: EdgeInsets.all(20),
+                width: double.infinity,
+                child: RaisedButton(
+                  onPressed: () => print('VOTE FOR CUSTODIANS'),
+                  child: Text(
+                    'Submit vote',
+                    style: Theme.of(context).textTheme.button,
+                  ),
+                ),
+              ),
+            ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       appBar: uciAppBar(),
       body: Column(
         children: <Widget>[
-          Text(
-            'Vote for 8 custodians',
-            style: Theme.of(context).textTheme.headline4,
-          ),
           SizedBox(height: 20),
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Text(
+              'Vote for 8 custodians',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+          ),
           _custodians == null
               ? Center(child: CircularProgressIndicator())
               : Expanded(
                   child: ListView.builder(
+                    padding: EdgeInsets.all(20),
                     itemCount: _custodians.length,
                     itemBuilder: (_, index) => _buildCustodianTile(
                       _custodians[index],
@@ -69,7 +92,14 @@ class _VotePageState extends State<VotePage> {
   Widget _buildCustodianTile(_CustodianViewModel custodian) {
     return CheckboxListTile(
       value: custodian.isSelected,
-      onChanged: (val) => setState(() => custodian.isSelected = val),
+      onChanged: (val) => setState(() {
+        custodian.isSelected = val;
+        final selectedCount = _custodians.fold(
+            0,
+            (previousValue, element) =>
+                previousValue += element.isSelected ? 1 : 0);
+        _buttonOpacity = selectedCount >= 2 ? 1.0 : 0.0;
+      }),
       title: Text(
         custodian.username,
         style: Theme.of(context).textTheme.headline6,
