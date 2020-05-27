@@ -15,13 +15,24 @@ class UciApi {
 
   UciApi({this.prefs});
 
-  //create uci acc
-  //1. create acc on eos
+  //TODO handle more fallbacks & edge cases
+  //1. create eos acc
+  //2. write keys to prefs
+  //3. create telos decide regvoter
+  //4. write user metadata to uci contract
   Future<eos.Account> createAccount(
     String accountName,
     AccountKeys keys,
   ) async {
-    final response = await http.post(
+    await _createEosAccount(accountName, keys);
+    await prefs.setKeys(keys);
+  }
+
+  Future<void> _createEosAccount(
+    String accountName,
+    AccountKeys keys,
+  ) {
+    return http.post(
       '$_apiUrl/api/account',
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
@@ -30,8 +41,6 @@ class UciApi {
         'owner_key': keys.owner.toEOSPublicKey().toString()
       }),
     );
-
-    return fetchAccountByName(accountName);
   }
 
   Future<eos.Account> fetchAccount() async {
