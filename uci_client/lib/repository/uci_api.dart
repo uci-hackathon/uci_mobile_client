@@ -89,14 +89,70 @@ class UciApi {
       };
   }
 
-  Future<Map<String, dynamic>> fetchMetadata() async {
-    final account = await fetchAccount();
+  eos.Action _buildNominationAction(UciAccount uciAccount) {
+    return eos.Action()
+      ..account = 'uci'
+      ..name = 'nominate'
+      ..authorization = [
+        eos.Authorization()
+          ..actor = uciAccount.username
+          ..permission = 'owner'
+      ]
+      ..data = {
+        'from': uciAccount.username,
+        'to': uciAccount.username
+      };
+  }
+
+  eos.Action _buildCreateProposalAction(UciAccount uciAccount, Proposal proposal) {
+    return eos.Action()
+      ..account = 'uci'
+      ..name = 'submitprop'
+      ..authorization = [
+        eos.Authorization()
+          ..actor = uciAccount.username
+          ..permission = 'owner'
+      ]
+      ..data = {
+        'proposer': uciAccount.username,
+        'body': proposal.body,
+        'amount': proposal.amountRequested,
+      };
+  }
+
+  eos.Action _buildCancelProposalAction(UciAccount uciAccount, Proposal proposal) {
+    return eos.Action()
+      ..account = 'uci'
+      ..name = 'endprop'
+      ..authorization = [
+        eos.Authorization()
+          ..actor = uciAccount.username
+          ..permission = 'owner'
+      ]
+      ..data = {
+        'proposal_id': proposal.proposalId
+      };
+  }
+
+  Future<Map<String, dynamic>> fetchMetadata(String accountName) async {
     return _eos.getTableRow(
       'telos.decide',
-      account.accountName,
+      'uci',
       'metadata',
-      tableKey: account.accountName,
+      tableKey: accountName,
     );
+  }
+
+  Future<List<Map<String, dynamic>>> fetchCustodians() async {
+    return _eos.getTableRows('uci', 'uci', 'custodian', limit: 80);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchNominates() async {
+    return _eos.getTableRows('uci', 'uci', 'nominates', limit: 80);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchProposals() async {
+    return _eos.getTableRows('uci', 'uci', 'proposals', limit: 80);
   }
 
   Future<eos.Account> fetchAccount() async {
