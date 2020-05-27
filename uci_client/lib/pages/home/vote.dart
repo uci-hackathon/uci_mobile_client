@@ -28,15 +28,16 @@ class _VotePageState extends State<VotePage> {
   void initState() {
     Future.microtask(() async {
       final api = Provider.of<UciApi>(context, listen: false);
-      final usernames = await api.fetchCustodians();
+      final usernames = await api.fetchNominates();
+      print(usernames);
       _custodians =
           usernames.map((e) => _CustodianViewModel(username: e)).toList();
       setState(() {});
 
-//      _custodians.forEach((c) async {
-//        c.uciAccount = await api.fetchMetadata(c.username);
-//        setState(() {});
-//      });
+      _custodians.forEach((c) async {
+        c.uciAccount = await api.fetchMetadata(c.username);
+        setState(() {});
+      });
     });
     super.initState();
   }
@@ -106,13 +107,15 @@ class _VotePageState extends State<VotePage> {
       ),
       subtitle: FlatButton(
         onPressed: () => print('REVIEW!'),
-        child: Text(
-          'Review >',
-          style: Theme.of(context).textTheme.caption.copyWith(
-                color: Colors.blueAccent,
-                fontWeight: FontWeight.bold,
+        child: custodian.isFetchingDetails
+            ? LinearProgressIndicator()
+            : Text(
+                'Review >',
+                style: Theme.of(context).textTheme.caption.copyWith(
+                      color: Colors.blueAccent,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
-        ),
       ),
     );
   }

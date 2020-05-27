@@ -5,6 +5,7 @@ import 'models/models.dart';
 class Prefs {
   static const _kOwnerKey = 'owner_key';
   static const _kActiveKey = 'active_key';
+  static const _kAccountName = 'account_name';
 
   final _storage = FlutterSecureStorage();
 
@@ -23,5 +24,14 @@ class Prefs {
     }
 
     return keys;
+  }
+
+  Future<String> accountName() async {
+    return _storage.read(key: _kAccountName);
+  }
+
+  Future<String> setAccountName(String accountName) async {
+    await _storage.write(key: _kAccountName, value: accountName);
+    return accountName;
   }
 }

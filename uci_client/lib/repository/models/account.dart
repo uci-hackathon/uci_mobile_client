@@ -16,7 +16,11 @@ class UciAccount {
     firstName = json['first_name'];
     lastName = json['last_name'];
     username = json['username'];
-    birthDate = DateTime.tryParse(json['birth_date']);
+
+    if (json['birth_date'] != null) {
+      birthDate = DateTime.tryParse(json['birth_date']);
+    }
+
     email = json['email'];
     links = json['links'];
   }

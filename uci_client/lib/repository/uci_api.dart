@@ -25,6 +25,7 @@ class UciApi {
     AccountKeys keys,
   ) async {
     await _createEosAccount(uciAccount.username, keys);
+    await prefs.setAccountName(uciAccount.username);
     await prefs.setKeys(keys);
 
     await _prepareKeys();
@@ -85,33 +86,77 @@ class UciApi {
       };
   }
 
+  eos.Action _buildNominationAction(String accountName) {
+    return eos.Action()
+      ..account = 'uci'
+      ..name = 'nominate'
+      ..authorization = [
+        eos.Authorization()
+          ..actor = accountName
+          ..permission = 'owner'
+      ]
+      ..data = {'from': accountName, 'to': accountName};
+  }
+
+  eos.Action _buildCreateProposalAction(
+      UciAccount uciAccount, Proposal proposal) {
+    return eos.Action()
+      ..account = 'uci'
+      ..name = 'submitprop'
+      ..authorization = [
+        eos.Authorization()
+          ..actor = uciAccount.username
+          ..permission = 'owner'
+      ]
+      ..data = {
+        'proposer': uciAccount.username,
+        'body': proposal.body,
+        'amount': proposal.amountRequested,
+      };
+  }
+
+  eos.Action _buildCancelProposalAction(
+      UciAccount uciAccount, Proposal proposal) {
+    return eos.Action()
+      ..account = 'uci'
+      ..name = 'endprop'
+      ..authorization = [
+        eos.Authorization()
+          ..actor = uciAccount.username
+          ..permission = 'owner'
+      ]
+      ..data = {'proposal_id': proposal.proposalId};
+  }
+
+  Future<dynamic> nominateSelfAsCustodian() async {
+    await _prepareKeys();
+    final accountName = await prefs.accountName();
+    return _eos.pushTransaction(eos.Transaction()
+      ..actions = [
+        _buildNominationAction(accountName),
+      ]);
+  }
+
   Future<UciAccount> fetchMetadata(String accountName) async {
-    final row = await _eos.getTableRow(
+    final data = await _eos.getTableRow(
       'uci',
-      accountName,
+      'uci',
       'metadata',
       tableKey: accountName,
     );
 
-    final acc = UciAccount.fromJson(row);
+    final acc = UciAccount.fromJson(data);
     acc.username = accountName;
     return acc;
   }
 
-  Future<List<String>> fetchCustodians() async {
-    await Future.delayed(Duration(milliseconds: 3000));
-    return [
-      'pep',
-      'kek',
-      'ses',
-    ];
+  Future<List<String>> fetchNominates() async {
+    final data = await _eos.getTableRow('uci', 'uci', 'nomination');
+    return (data['nominations_list'] as List).cast<String>();
   }
 
-  Future<eos.Account> fetchAccount() async {
-    final keys = await prefs.keys();
-    final names = await _eos.getKeyAccounts(keys.owner.toString());
-    //TODO only one account is supported rn
-    return _eos.getAccount(names.accountNames.first);
+  Future<List<Map<String, dynamic>>> fetchProposals() async {
+    return _eos.getTableRows('uci', 'uci', 'proposals', limit: 80);
   }
 
   Future<List<eos.Holding>> fetchBalance(eos.Account account) {
