@@ -47,7 +47,7 @@ class _VotePageState extends State<VotePage> {
       floatingActionButton: _buttonOpacity == 0.0
           ? Container()
           : AnimatedOpacity(
-              duration: Duration(milliseconds: 300),
+              duration: Duration(milliseconds: 400),
               opacity: _buttonOpacity,
               child: Container(
                 padding: EdgeInsets.all(20),
