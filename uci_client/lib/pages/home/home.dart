@@ -1,8 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import 'apply_router.gr.dart';
+import 'balance.dart';
 import 'vote_router.gr.dart';
 
+export 'apply.dart';
 export 'uci_account_detail.dart';
 export 'vote.dart';
 
@@ -66,13 +69,9 @@ class _HomePageState extends State<HomePage> {
         ExtendedNavigator<VoteRouter>(
           router: VoteRouter(),
         ),
-        Container(
-          alignment: Alignment.center,
-          child: Text('2'),
-        ),
-        Container(
-          alignment: Alignment.center,
-          child: Text('3'),
+        BalancePage(),
+        ExtendedNavigator<ApplyRouter>(
+          router: ApplyRouter(),
         ),
         Container(
           alignment: Alignment.center,

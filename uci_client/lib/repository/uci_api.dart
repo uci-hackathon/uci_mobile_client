@@ -206,6 +206,18 @@ class UciApi {
     return (data['nominations_list'] as List).cast<String>();
   }
 
+  Future<UciBalance> fetchUciBalance() async {
+    final accountName = await prefs.accountName();
+    print(accountName);
+    final data = await _eos.getTableRow('telos.decide', accountName, 'voters');
+
+    print(data);
+    return UciBalance(
+      liquid: data['liquid'],
+      staked: data['staked'],
+    );
+  }
+
   Future<List<Map<String, dynamic>>> fetchProposals() async {
     return _eos.getTableRows('uci', 'uci', 'proposals', limit: 80);
   }

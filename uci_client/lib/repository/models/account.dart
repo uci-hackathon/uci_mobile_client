@@ -5,6 +5,13 @@ part 'account.g.dart';
 
 enum AccountType { create, vote, nominate }
 
+class UciBalance {
+  UciBalance({this.liquid, this.staked});
+
+  String liquid;
+  String staked;
+}
+
 @HiveType(typeId: 0)
 class UciAccount extends HiveObject {
   UciAccount({this.username});
