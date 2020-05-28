@@ -1,15 +1,30 @@
 import 'package:eosdart_ecc/eosdart_ecc.dart';
+import 'package:hive/hive.dart';
+
+part 'account.g.dart';
 
 enum AccountType { create, vote, nominate }
 
-class UciAccount {
+@HiveType(typeId: 0)
+class UciAccount extends HiveObject {
   UciAccount({this.username});
 
+  @HiveField(0)
   String firstName;
+
+  @HiveField(1)
   String lastName;
+
+  @HiveField(2)
   String username;
+
+  @HiveField(3)
   DateTime birthDate;
+
+  @HiveField(4)
   String email;
+
+  @HiveField(5)
   List<String> links;
 
   UciAccount.fromJson(Map<String, dynamic> json) {
@@ -17,12 +32,13 @@ class UciAccount {
     lastName = json['last_name'];
     username = json['username'];
 
-    if (json['birth_date'] != null) {
-      birthDate = DateTime.tryParse(json['birth_date']);
+    final bd = json['birth_date'];
+    if (bd != null) {
+      birthDate = bd is DateTime ? bd : DateTime.tryParse(json['birth_date']);
     }
 
     email = json['email'];
-    links = json['links'];
+    links = json['links'] ?? [];
   }
 
   Map<String, dynamic> toJson() {

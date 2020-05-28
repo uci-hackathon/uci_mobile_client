@@ -7,5 +7,5 @@ class $VoteRouter {
   @initial
   VotePage votePage;
 
-  CustodianDetailsPage custodianDetailsPage;
+  UciAccountDetails uciAccountDetails;
 }

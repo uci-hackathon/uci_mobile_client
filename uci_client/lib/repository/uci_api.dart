@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:eosdart/eosdart.dart' as eos;
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 
 import 'models/models.dart';
@@ -10,20 +11,33 @@ class UciApi {
   static const _eosUrl = 'https://api-test.telosfoundation.io';
   static const _apiUrl = 'http://91ca4a99.ngrok.io';
 
+  final _uciAccountStorage = Hive.openBox<UciAccount>(
+    'uci_accounts',
+  );
+
   final _eos = eos.EOSClient(_eosUrl, 'v1');
   final Prefs prefs;
 
   UciApi({this.prefs});
+
+  Future<bool> isRegistered() async {
+    final accountName = await prefs.accountName();
+    if (accountName == null) {
+      return false;
+    }
+
+    final uciAccount = (await _uciAccountStorage).get(accountName);
+    return uciAccount != null;
+  }
 
   //TODO handle more fallbacks & edge cases
   //1. create eos acc
   //2. write keys to prefs
   //3. create telos decide regvoter
   //4. write user metadata to uci contract
-  Future<AccountKeys> createAccount(
-    UciAccount uciAccount,
-    AccountKeys keys,
-  ) async {
+  Future<AccountKeys> createAccount(UciAccount uciAccount) async {
+    final keys = AccountKeys.create();
+
     await _createEosAccount(uciAccount.username, keys);
     await prefs.setAccountName(uciAccount.username);
     await prefs.setKeys(keys);
@@ -32,10 +46,11 @@ class UciApi {
     final transaction = eos.Transaction()
       ..actions = [
         _buildCreateVoterAction(uciAccount.username),
-        _buildUpsertMedatataAction(uciAccount),
+        _buildUpsertMedadataAction(uciAccount),
       ];
 
     await _eos.pushTransaction(transaction);
+    await (await _uciAccountStorage).put(uciAccount.username, uciAccount);
 
     return keys;
   }
@@ -71,7 +86,27 @@ class UciApi {
       };
   }
 
-  eos.Action _buildUpsertMedatataAction(UciAccount uciAccount) {
+  eos.Action _buildCreateVote(
+    String accountName,
+    String ballotName,
+    List<String> options,
+  ) {
+    return eos.Action()
+      ..account = 'telos.decide'
+      ..name = 'castvote'
+      ..authorization = [
+        eos.Authorization()
+          ..actor = accountName
+          ..permission = 'owner'
+      ]
+      ..data = {
+        'voter': accountName,
+        'ballot_name': ballotName,
+        'options': options,
+      };
+  }
+
+  eos.Action _buildUpsertMedadataAction(UciAccount uciAccount) {
     return eos.Action()
       ..account = 'uci'
       ..name = 'upsertmeta'
@@ -137,6 +172,21 @@ class UciApi {
       ]);
   }
 
+  Future<dynamic> submitVote(List<String> options) async {
+    await _prepareKeys();
+    final accountName = await prefs.accountName();
+    final ballotName = await _fetchCurrentBallot();
+    return _eos.pushTransaction(eos.Transaction()
+      ..actions = [
+        _buildCreateVote(accountName, ballotName, options),
+      ]);
+  }
+
+  Future<String> _fetchCurrentBallot() async {
+    final data = await _eos.getTableRow('uci', 'uci', 'config');
+    return data['current_election_ballot'];
+  }
+
   Future<UciAccount> fetchMetadata(String accountName) async {
     final data = await _eos.getTableRow(
       'uci',
@@ -145,7 +195,8 @@ class UciApi {
       tableKey: accountName,
     );
 
-    final acc = UciAccount.fromJson(data);
+    final json = jsonDecode(data['json']);
+    final acc = UciAccount.fromJson(json);
     acc.username = accountName;
     return acc;
   }

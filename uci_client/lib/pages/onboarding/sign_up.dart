@@ -22,51 +22,41 @@ class _SignUpViewModel {
   static const kLinks = 'links';
 
   static const linksCount = 4;
-
-  String firstName;
-  String lastName;
-  String username;
-  DateTime birthDate;
-  String email;
-  List<String> links;
-
-  _SignUpViewModel.fromJson(Map<String, dynamic> json) {
-    firstName = json[kFirstName];
-    lastName = json[kLastName];
-    username = json[kUsername];
-    birthDate = json[kBirthDate];
-    email = json[kEmail];
-    links = List.generate(
-      linksCount,
-      (i) => (json[kLinks + (i + 1).toString()] ?? '').toString(),
-    ).where((l) => l.isNotEmpty).toList();
-  }
 }
 
 class _SignUpPageState extends State<SignUpPage> {
   final _fbKey = GlobalKey<FormBuilderState>();
   var _buttonOpacity = 0.0;
   var _isUsernameFree = true;
-
-  @override
-  void initState() {
-    Future.microtask(() async {
-      final prefs = Provider.of<Prefs>(context, listen: false);
-    });
-    super.initState();
-  }
+  var _isCreatingAccount = false;
 
   void _onCreateAccountPressed(BuildContext context) async {
-    ExtendedNavigator.of(context).pushNamed(Routes.homePage);
-//    final prefs = Provider.of<Prefs>(context, listen: false);
-//    final api = Provider.of<UciApi>(context, listen: false);
-//
-//    final keys = AccountKeys.create();
-//    final acc =
-//        await api.createAccount(_fbKey.currentState.value['username'], keys);
-//    await prefs.setKeys(keys);
-//
-//    //set uci metadata
+    setState(() {
+      _isCreatingAccount = true;
+    });
+
+    try {
+      final api = Provider.of<UciApi>(context, listen: false);
+      final links = List.generate(
+        _SignUpViewModel.linksCount,
+        (i) => (_fbKey.currentState
+                    .value[_SignUpViewModel.kLinks + (i + 1).toString()] ??
+                '')
+            .toString(),
+      ).where((l) => l.isNotEmpty).toList();
+      _fbKey.currentState.value[_SignUpViewModel.kLinks] = links;
+
+      await api.createAccount(UciAccount.fromJson(_fbKey.currentState.value));
+      ExtendedNavigator.of(context).pushNamed(Routes.homePage);
+    } catch (e) {
+      print(e);
+      if (e is Error) {
+        print(e.stackTrace.toString());
+      }
+      setState(() {
+        _isCreatingAccount = false;
+      });
+    }
   }
 
   @override
@@ -78,15 +68,30 @@ class _SignUpPageState extends State<SignUpPage> {
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(20.0),
-          child: RaisedButton(
-            onPressed: _buttonOpacity > 0.0
-                ? () => _onCreateAccountPressed(context)
-                : null,
-            child: Text(
-              'Create account',
-              style: Theme.of(context).textTheme.button,
-            ),
-          ),
+          child: _isCreatingAccount
+              ? Container(
+                  color: Colors.black.withOpacity(0.5),
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        'This may take a while',
+                        style: Theme.of(context).textTheme.headline4,
+                      ),
+                      LinearProgressIndicator(),
+                    ],
+                  ),
+                )
+              : RaisedButton(
+                  onPressed: _buttonOpacity > 0.0
+                      ? () => _onCreateAccountPressed(context)
+                      : null,
+                  child: Text(
+                    'Create account',
+                    style: Theme.of(context).textTheme.button,
+                  ),
+                ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -100,6 +105,13 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
           SizedBox(height: 20),
           FormBuilder(
+            initialValue: {
+              _SignUpViewModel.kLinks + '1': 'test.com',
+              _SignUpViewModel.kEmail: 'test@email.com',
+              _SignUpViewModel.kBirthDate: DateTime.now(),
+              _SignUpViewModel.kLastName: 'test',
+              _SignUpViewModel.kFirstName: 'test',
+            },
             onChanged: (_) => setState(
               () => _buttonOpacity = _fbKey.currentState.validate() ? 1.0 : 0.0,
             ),

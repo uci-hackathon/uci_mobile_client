@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:uci_client/pages/home/vote.dart';
-import 'package:uci_client/pages/home/custodian_detail.dart';
+import 'package:uci_client/pages/home/uci_account_detail.dart';
 
 abstract class Routes {
   static const votePage = '/';
-  static const custodianDetailsPage = '/custodian-details-page';
+  static const uciAccountDetails = '/uci-account-details';
   static const all = {
     votePage,
-    custodianDetailsPage,
+    uciAccountDetails,
   };
 }
 
@@ -35,9 +35,9 @@ class VoteRouter extends RouterBase {
           builder: (context) => VotePage(),
           settings: settings,
         );
-      case Routes.custodianDetailsPage:
+      case Routes.uciAccountDetails:
         return MaterialPageRoute<dynamic>(
-          builder: (context) => CustodianDetailsPage(),
+          builder: (context) => UciAccountDetails(),
           settings: settings,
         );
       default:

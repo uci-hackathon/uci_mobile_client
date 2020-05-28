@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'vote_router.gr.dart';
 
-export 'custodian_detail.dart';
+export 'uci_account_detail.dart';
 export 'vote.dart';
 
 class HomePage extends StatefulWidget {
