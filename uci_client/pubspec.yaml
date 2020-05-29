@@ -17,6 +17,9 @@ dependencies:
   auto_route: ^0.5.0
   flutter_secure_storage: ^3.3.3
   url_launcher: ^5.4.10
+  flutter_image_compress: ^0.6.8
+  image_picker: ^0.6.7
+  circular_profile_avatar: ^1.0.6
   eosdart:
     git: https://github.com/tapkain/eosdart.git
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:eosdart_ecc/eosdart_ecc.dart';
 import 'package:hive/hive.dart';
 
@@ -34,6 +36,9 @@ class UciAccount extends HiveObject {
   @HiveField(5)
   List<String> links;
 
+  @HiveField(6)
+  List<int> avatar;
+
   UciAccount.fromJson(Map<String, dynamic> json) {
     firstName = json['first_name'];
     lastName = json['last_name'];
@@ -45,7 +50,11 @@ class UciAccount extends HiveObject {
     }
 
     email = json['email'];
-    links = json['links'] ?? [];
+    links = (json['links'] ?? []).cast<String>();
+
+    if (json['avatar'] != null) {
+      avatar = base64Decode(json['avatar']).toList();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -56,6 +65,7 @@ class UciAccount extends HiveObject {
       'birth_date': birthDate?.toIso8601String(),
       'email': email,
       'links': links,
+      'avatar': avatar != null ? base64Encode(avatar) : null,
     };
   }
 }

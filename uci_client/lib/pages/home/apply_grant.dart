@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:provider/provider.dart';
 
+import '../../repository/repository.dart';
 import '../../widgets.dart';
 
 class ApplyForGrantPage extends StatefulWidget {
@@ -27,6 +29,14 @@ class _ApplyForGrantPageState extends State<ApplyForGrantPage> {
     });
 
     try {
+      final api = Provider.of<UciApi>(context, listen: false);
+      final data = _fbKey.currentState.value;
+      await api.submitGrant(Grant(
+        amount: data[_ApplyForGrantModel.kAmount],
+        title: data[_ApplyForGrantModel.kTitle],
+        why: data[_ApplyForGrantModel.kWhy],
+        team: data[_ApplyForGrantModel.kTeam],
+      ));
       ExtendedNavigator.of(context).pop();
     } catch (e) {
       print(e);

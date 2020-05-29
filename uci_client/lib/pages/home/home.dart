@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../onboarding/sign_up.dart';
 import 'apply_router.gr.dart';
 import 'balance.dart';
 import 'vote_router.gr.dart';
@@ -73,10 +74,7 @@ class _HomePageState extends State<HomePage> {
         ExtendedNavigator<ApplyRouter>(
           router: ApplyRouter(),
         ),
-        Container(
-          alignment: Alignment.center,
-          child: Text('4'),
-        ),
+        SignUpPage(),
       ],
     );
   }

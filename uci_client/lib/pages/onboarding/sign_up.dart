@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:uci_client/repository/repository.dart';
@@ -20,6 +25,7 @@ class _SignUpViewModel {
   static const kBirthDate = 'birth_date';
   static const kEmail = 'email';
   static const kLinks = 'links';
+  static const kAvatar = 'avatar';
 
   static const linksCount = 4;
 }
@@ -30,6 +36,46 @@ class _SignUpPageState extends State<SignUpPage> {
   var _isUsernameFree = true;
   var _isCreatingAccount = false;
 
+  bool get _isRegistered => _uciAccount != null;
+  UciAccount _uciAccount;
+
+  Map<String, dynamic> _initialValue = {
+    _SignUpViewModel.kLinks + '1': 'test.com',
+    _SignUpViewModel.kEmail: 'test@email.com',
+    _SignUpViewModel.kBirthDate: DateTime.now(),
+    _SignUpViewModel.kLastName: 'test',
+    _SignUpViewModel.kFirstName: 'test',
+  };
+
+  List<String> _transformLinks() {
+    return List.generate(
+      _SignUpViewModel.linksCount,
+      (i) => (_fbKey.currentState
+                  .value[_SignUpViewModel.kLinks + (i + 1).toString()] ??
+              '')
+          .toString(),
+    ).where((l) => l.isNotEmpty).toList();
+  }
+
+  Future<String> _transformAvatar() async {
+    final avatar = _fbKey.currentState.value[_SignUpViewModel.kAvatar];
+    if (avatar == null || avatar.isEmpty) {
+      return null;
+    }
+
+    File file = avatar.first;
+    Uint8List bytes = await file.readAsBytes();
+    final listBytes = await FlutterImageCompress.compressWithList(
+      bytes.toList(),
+      minHeight: 50,
+      minWidth: 50,
+      quality: 70,
+      rotate: 135,
+    );
+
+    return base64Encode(listBytes);
+  }
+
   void _onCreateAccountPressed(BuildContext context) async {
     setState(() {
       _isCreatingAccount = true;
@@ -37,16 +83,19 @@ class _SignUpPageState extends State<SignUpPage> {
 
     try {
       final api = Provider.of<UciApi>(context, listen: false);
-      final links = List.generate(
-        _SignUpViewModel.linksCount,
-        (i) => (_fbKey.currentState
-                    .value[_SignUpViewModel.kLinks + (i + 1).toString()] ??
-                '')
-            .toString(),
-      ).where((l) => l.isNotEmpty).toList();
-      _fbKey.currentState.value[_SignUpViewModel.kLinks] = links;
+      final value = _fbKey.currentState.value;
+      value[_SignUpViewModel.kLinks] = _transformLinks();
+      value[_SignUpViewModel.kAvatar] = await _transformAvatar();
+      final acc = UciAccount.fromJson(value);
+      if (_isRegistered) {
+        await api.updateAccount(acc);
+        setState(() {
+          _isCreatingAccount = false;
+        });
+        return;
+      }
 
-      await api.createAccount(UciAccount.fromJson(_fbKey.currentState.value));
+      await api.createAccount(acc);
       ExtendedNavigator.of(context).pushNamed(Routes.homePage);
     } catch (e) {
       print(e);
@@ -57,6 +106,26 @@ class _SignUpPageState extends State<SignUpPage> {
         _isCreatingAccount = false;
       });
     }
+  }
+
+  @override
+  void initState() {
+    Future.microtask(() async {
+      final api = Provider.of<UciApi>(context, listen: false);
+      _uciAccount = await api.currentUciAccount();
+      if (_isRegistered) {
+        _initialValue = _uciAccount.toJson();
+        final l = _initialValue[_SignUpViewModel.kLinks] as List;
+        var i = 0;
+        l.forEach((element) {
+          i++;
+          _initialValue[_SignUpViewModel.kLinks + i.toString()] = element;
+        });
+      }
+
+      setState(() {});
+    });
+    super.initState();
   }
 
   @override
@@ -88,7 +157,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ? () => _onCreateAccountPressed(context)
                       : null,
                   child: Text(
-                    'Create account',
+                    !_isRegistered ? 'Create account' : 'Edit',
                     style: Theme.of(context).textTheme.button,
                   ),
                 ),
@@ -100,18 +169,14 @@ class _SignUpPageState extends State<SignUpPage> {
         padding: const EdgeInsets.all(20.0),
         children: <Widget>[
           Text(
-            'Registration',
+            !_isRegistered
+                ? 'Registration'
+                : 'Edit account\n${_uciAccount.username}',
             style: Theme.of(context).textTheme.headline4,
           ),
           SizedBox(height: 20),
           FormBuilder(
-            initialValue: {
-              _SignUpViewModel.kLinks + '1': 'test.com',
-              _SignUpViewModel.kEmail: 'test@email.com',
-              _SignUpViewModel.kBirthDate: DateTime.now(),
-              _SignUpViewModel.kLastName: 'test',
-              _SignUpViewModel.kFirstName: 'test',
-            },
+            initialValue: _initialValue,
             onChanged: (_) => setState(
               () => _buttonOpacity = _fbKey.currentState.validate() ? 1.0 : 0.0,
             ),
@@ -131,6 +196,18 @@ class _SignUpPageState extends State<SignUpPage> {
         Text(
           'Tell us a bit about you, the basics',
           style: Theme.of(context).textTheme.subtitle1,
+        ),
+        SizedBox(height: 20),
+        Theme(
+          data: ThemeData(),
+          child: FormBuilderImagePicker(
+            validators: [
+              FormBuilderValidators.max(1),
+              FormBuilderValidators.maxLength(1),
+            ],
+            labelText: 'Avatar',
+            attribute: _SignUpViewModel.kAvatar,
+          ),
         ),
         SizedBox(height: 20),
         FormBuilderTextField(
@@ -161,37 +238,39 @@ class _SignUpPageState extends State<SignUpPage> {
           ],
         ),
         SizedBox(height: 20),
-        FormBuilderTextField(
-          onChanged: (username) async {
-            final u = username.toString();
-            if (u.length != 12) {
-              return;
-            }
+        _isRegistered
+            ? Container()
+            : FormBuilderTextField(
+                onChanged: (username) async {
+                  final u = username.toString();
+                  if (u.length != 12) {
+                    return;
+                  }
 
-            try {
-              await Provider.of<UciApi>(context, listen: false)
-                  .fetchAccountByName(u);
-              setState(() {
-                _isUsernameFree = false;
-              });
-            } catch (e) {
-              _isUsernameFree = true;
-            }
-          },
-          cursorColor: Colors.black,
-          maxLines: 1,
-          autocorrect: false,
-          attribute: _SignUpViewModel.kUsername,
-          decoration: InputDecoration(
-            labelText: 'Username (12 characters) *',
-          ),
-          validators: [
-            FormBuilderValidators.required(),
-            FormBuilderValidators.minLength(12),
-            FormBuilderValidators.maxLength(12),
-            (_) => _isUsernameFree ? null : 'Username is taken',
-          ],
-        ),
+                  try {
+                    await Provider.of<UciApi>(context, listen: false)
+                        .fetchAccountByName(u);
+                    setState(() {
+                      _isUsernameFree = false;
+                    });
+                  } catch (e) {
+                    _isUsernameFree = true;
+                  }
+                },
+                cursorColor: Colors.black,
+                maxLines: 1,
+                autocorrect: false,
+                attribute: _SignUpViewModel.kUsername,
+                decoration: InputDecoration(
+                  labelText: 'Username (12 characters) *',
+                ),
+                validators: [
+                  FormBuilderValidators.required(),
+                  FormBuilderValidators.minLength(12),
+                  FormBuilderValidators.maxLength(12),
+                  (_) => _isUsernameFree ? null : 'Username is taken',
+                ],
+              ),
         SizedBox(height: 20),
         Theme(
           data: ThemeData(

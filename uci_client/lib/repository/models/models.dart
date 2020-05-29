@@ -1,12 +1,5 @@
 export 'account.dart';
-
-class Proposal {
-  String proposalId;
-  String ballotName;
-  String proposer;
-  double amountRequested;
-  String body;
-}
+export 'grant.dart';
 
 class Ballot {
   String ballotName;
