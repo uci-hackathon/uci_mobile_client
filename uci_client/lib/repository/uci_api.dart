@@ -23,8 +23,8 @@ class UciApi {
   UciApi({this.prefs});
 
   Future<bool> isRegistered() async {
-    print('OWNER KEY: ${_ownerKey}');
     final acc = await currentUciAccount();
+    print('AVATAR: : ${acc?.avatar}');
     return acc != null;
   }
 
@@ -200,8 +200,6 @@ class UciApi {
     String accountName,
     Grant grant,
   ) {
-    print(grant.body());
-    print(grant.amount);
     return eos.Action()
       ..account = 'uci'
       ..name = 'submitprop'
@@ -232,6 +230,7 @@ class UciApi {
 
   Future<UciAccount> currentUciAccount() async {
     final accountName = await prefs.accountName();
+    print('CURRENT ACCOUNT NAME $accountName');
     if (accountName == null) {
       return null;
     }
@@ -299,7 +298,7 @@ class UciApi {
       'uci',
       'uci',
       'metadata',
-      tableKey: accountName,
+      lower: accountName,
     );
 
     final json = jsonDecode(data['json']);

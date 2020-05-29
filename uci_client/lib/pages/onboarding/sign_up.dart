@@ -28,6 +28,33 @@ class _SignUpViewModel {
   static const kAvatar = 'avatar';
 
   static const linksCount = 4;
+
+  static Map<String, dynamic> toViewModel(UciAccount acc) {
+    var viewModel = {
+      _SignUpViewModel.kLinks + '1': 'test.com',
+      _SignUpViewModel.kEmail: 'test@email.com',
+      _SignUpViewModel.kBirthDate: DateTime.now(),
+      _SignUpViewModel.kLastName: 'test',
+      _SignUpViewModel.kFirstName: 'test',
+    };
+
+    if (acc != null) {
+      viewModel = acc.toJson();
+      viewModel.remove(_SignUpViewModel.kAvatar);
+
+      viewModel[_SignUpViewModel.kBirthDate] =
+          DateTime.tryParse(viewModel[_SignUpViewModel.kBirthDate]);
+
+      final l = viewModel[_SignUpViewModel.kLinks] as List;
+      var i = 0;
+      l.forEach((element) {
+        i++;
+        viewModel[_SignUpViewModel.kLinks + i.toString()] = element;
+      });
+    }
+
+    return viewModel;
+  }
 }
 
 class _SignUpPageState extends State<SignUpPage> {
@@ -39,13 +66,7 @@ class _SignUpPageState extends State<SignUpPage> {
   bool get _isRegistered => _uciAccount != null;
   UciAccount _uciAccount;
 
-  Map<String, dynamic> _initialValue = {
-    _SignUpViewModel.kLinks + '1': 'test.com',
-    _SignUpViewModel.kEmail: 'test@email.com',
-    _SignUpViewModel.kBirthDate: DateTime.now(),
-    _SignUpViewModel.kLastName: 'test',
-    _SignUpViewModel.kFirstName: 'test',
-  };
+  Map<String, dynamic> _initialValue;
 
   List<String> _transformLinks() {
     return List.generate(
@@ -87,7 +108,9 @@ class _SignUpPageState extends State<SignUpPage> {
       value[_SignUpViewModel.kLinks] = _transformLinks();
       value[_SignUpViewModel.kAvatar] = await _transformAvatar();
       final acc = UciAccount.fromJson(value);
+
       if (_isRegistered) {
+        _uciAccount = acc;
         await api.updateAccount(acc);
         setState(() {
           _isCreatingAccount = false;
@@ -113,16 +136,8 @@ class _SignUpPageState extends State<SignUpPage> {
     Future.microtask(() async {
       final api = Provider.of<UciApi>(context, listen: false);
       _uciAccount = await api.currentUciAccount();
-      if (_isRegistered) {
-        _initialValue = _uciAccount.toJson();
-        final l = _initialValue[_SignUpViewModel.kLinks] as List;
-        var i = 0;
-        l.forEach((element) {
-          i++;
-          _initialValue[_SignUpViewModel.kLinks + i.toString()] = element;
-        });
-      }
-
+      _initialValue = _SignUpViewModel.toViewModel(_uciAccount);
+      print(_initialValue);
       setState(() {});
     });
     super.initState();
@@ -130,6 +145,12 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_initialValue == null) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return Scaffold(
       floatingActionButton: AnimatedOpacity(
         duration: Duration(milliseconds: 400),
