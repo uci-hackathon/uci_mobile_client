@@ -12,51 +12,34 @@ class ApplyPage extends StatefulWidget {
 class _ApplyPageState extends State<ApplyPage> {
   @override
   Widget build(BuildContext context) {
-    final h = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: uciAppBar(),
-      body: Padding(
+      body: ListView(
         padding: EdgeInsets.all(20),
-        child: Column(
-          children: <Widget>[
-            InkWell(
-              onTap: () => ExtendedNavigator.of(context)
-                  .pushNamed(Routes.applyForGrantPage),
-              child: Card(
-                child: Container(
-                  width: double.infinity,
-                  height: h * 0.3,
-                  padding: EdgeInsets.all(20),
-                  child: Text(
-                    'Apply for a grant',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline3
-                        .apply(color: Colors.white),
-                  ),
-                ),
-              ),
+        children: <Widget>[
+          UciCard(
+            onPressed: () => ExtendedNavigator.of(context)
+                .pushNamed(Routes.applyForGrantPage),
+            child: Text(
+              'Apply for a grant',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline3
+                  .apply(color: Colors.white),
             ),
-            SizedBox(height: 20),
-            InkWell(
-              onTap: () => print('apply grant'),
-              child: Card(
-                child: Container(
-                  width: double.infinity,
-                  height: h * 0.3,
-                  padding: EdgeInsets.all(20),
-                  child: Text(
-                    'Nominate custodian',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline3
-                        .apply(color: Colors.white),
-                  ),
-                ),
-              ),
+          ),
+          SizedBox(height: 20),
+          UciCard(
+            onPressed: () => print('lol'),
+            child: Text(
+              'Nominate custodian',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline3
+                  .apply(color: Colors.white),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

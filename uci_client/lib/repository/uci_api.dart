@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:html';
+import 'dart:io';
 
 import 'package:eosdart/eosdart.dart' as eos;
 import 'package:hive/hive.dart';
@@ -11,6 +11,7 @@ import 'prefs.dart';
 class UciApi {
   static const _eosUrl = 'https://api-test.telosfoundation.io';
   static const _apiUrl = 'https://uci-hackathon.herokuapp.com';
+  static const _ownerKey = String.fromEnvironment('OWNER_KEY');
 
   final _uciAccountStorage = Hive.openBox<UciAccount>(
     'uci_accounts',
@@ -22,6 +23,7 @@ class UciApi {
   UciApi({this.prefs});
 
   Future<bool> isRegistered() async {
+    print('OWNER KEY: ${_ownerKey}');
     final acc = await currentUciAccount();
     return acc != null;
   }
@@ -98,6 +100,52 @@ class UciApi {
         'voter': accountName,
         'treasury_symbol': '0,UCI',
         'referrer': accountName,
+      };
+  }
+
+  eos.Action _buildMintUciAction(String accountName, int quantity) {
+    return eos.Action()
+      ..account = 'telos.decide'
+      ..name = 'mint'
+      ..authorization = [
+        eos.Authorization()
+          ..actor = 'uci'
+          ..permission = 'owner'
+      ]
+      ..data = {
+        'to': accountName,
+        'quantity': '$quantity UCI',
+        'memo': '',
+      };
+  }
+
+  eos.Action _buildStakeUciAction(String accountName, int quantity) {
+    return eos.Action()
+      ..account = 'telos.decide'
+      ..name = 'stake'
+      ..authorization = [
+        eos.Authorization()
+          ..actor = accountName
+          ..permission = 'active'
+      ]
+      ..data = {
+        'voter': accountName,
+        'quantity': '$quantity UCI',
+      };
+  }
+
+  eos.Action _buildUnstakeUciAction(String accountName, int quantity) {
+    return eos.Action()
+      ..account = 'telos.decide'
+      ..name = 'unstake'
+      ..authorization = [
+        eos.Authorization()
+          ..actor = accountName
+          ..permission = 'active'
+      ]
+      ..data = {
+        'voter': accountName,
+        'quantity': '$quantity UCI',
       };
   }
 
@@ -191,6 +239,30 @@ class UciApi {
     return (await _uciAccountStorage).get(accountName);
   }
 
+  Future<dynamic> mintUciTokens(int quantity) async {
+    await _prepareKeys(AccountKeys.fromPrivate(_ownerKey));
+    final accountName = await prefs.accountName();
+
+    return _eos.pushTransaction(eos.Transaction()
+      ..actions = [_buildMintUciAction(accountName, quantity)]);
+  }
+
+  Future<dynamic> stakeUciTokens(int quantity) async {
+    await _prepareKeys();
+    final accountName = await prefs.accountName();
+
+    return _eos.pushTransaction(eos.Transaction()
+      ..actions = [_buildStakeUciAction(accountName, quantity)]);
+  }
+
+  Future<dynamic> unstakeUciTokens(int quantity) async {
+    await _prepareKeys();
+    final accountName = await prefs.accountName();
+
+    return _eos.pushTransaction(eos.Transaction()
+      ..actions = [_buildUnstakeUciAction(accountName, quantity)]);
+  }
+
   Future<dynamic> submitGrant(Grant grant) async {
     await _prepareKeys();
     final accountName = await prefs.accountName();
@@ -247,10 +319,7 @@ class UciApi {
     final data = await _eos.getTableRow('telos.decide', accountName, 'voters');
 
     print(data);
-    return UciBalance(
-      liquid: data['liquid'],
-      staked: data['staked'],
-    );
+    return UciBalance.fromJson(data);
   }
 
   Future<List<Map<String, dynamic>>> fetchProposals() async {
@@ -265,8 +334,8 @@ class UciApi {
     return _eos.getAccount(name);
   }
 
-  Future<AccountKeys> _prepareKeys() async {
-    final keys = await prefs.keys();
+  Future<AccountKeys> _prepareKeys([AccountKeys keys]) async {
+    keys = keys ?? await prefs.keys();
 
     _eos.keys[keys.owner.toEOSPublicKey().toString()] = keys.owner;
     if (keys.active != null) {

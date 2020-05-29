@@ -8,10 +8,17 @@ part 'account.g.dart';
 enum AccountType { create, vote, nominate }
 
 class UciBalance {
-  UciBalance({this.liquid, this.staked});
+  UciBalance.fromJson(Map<String, dynamic> json) {
+    liquid = _parseSymbol(json['liquid']);
+    staked = _parseSymbol(json['staked']);
+  }
 
-  String liquid;
-  String staked;
+  double _parseSymbol(String symbol) {
+    return double.tryParse(symbol.split(' ').first);
+  }
+
+  double liquid;
+  double staked;
 }
 
 @HiveType(typeId: 0)
