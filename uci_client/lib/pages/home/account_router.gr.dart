@@ -7,32 +7,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:uci_client/pages/home/nominates.dart';
+import 'package:uci_client/pages/home/account.dart';
+import 'package:uci_client/pages/home/manage_grants.dart';
+import 'package:uci_client/pages/onboarding/sign_up.dart';
 import 'package:uci_client/pages/home/uci_account_detail.dart';
 
 abstract class Routes {
-  static const nominatesPage = '/';
+  static const accountPage = '/';
+  static const manageGrantsPage = '/manage-grants-page';
+  static const editProfilePage = '/edit-profile-page';
+  static const grantVotersPage = '/grant-voters-page';
   static const uciAccountDetails = '/uci-account-details';
   static const all = {
-    nominatesPage,
+    accountPage,
+    manageGrantsPage,
+    editProfilePage,
+    grantVotersPage,
     uciAccountDetails,
   };
 }
 
-class VoteRouter extends RouterBase {
+class AccountRouter extends RouterBase {
   @override
   Set<String> get allRoutes => Routes.all;
 
   @Deprecated('call ExtendedNavigator.ofRouter<Router>() directly')
   static ExtendedNavigatorState get navigator =>
-      ExtendedNavigator.ofRouter<VoteRouter>();
+      ExtendedNavigator.ofRouter<AccountRouter>();
 
   @override
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case Routes.nominatesPage:
+      case Routes.accountPage:
         return MaterialPageRoute<dynamic>(
-          builder: (context) => NominatesPage(),
+          builder: (context) => AccountPage(),
+          settings: settings,
+        );
+      case Routes.manageGrantsPage:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ManageGrantsPage(),
+          settings: settings,
+        );
+      case Routes.editProfilePage:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => SignUpPage(),
+          settings: settings,
+        );
+      case Routes.grantVotersPage:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => GrantVotersPage(),
           settings: settings,
         );
       case Routes.uciAccountDetails:

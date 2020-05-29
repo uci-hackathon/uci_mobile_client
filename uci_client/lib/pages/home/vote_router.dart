@@ -1,11 +1,12 @@
 import 'package:auto_route/auto_route_annotations.dart';
 
 import 'home.dart';
+import 'nominates.dart';
 
 @MaterialAutoRouter()
 class $VoteRouter {
   @initial
-  VotePage votePage;
+  NominatesPage nominatesPage;
 
   UciAccountDetails uciAccountDetails;
 }

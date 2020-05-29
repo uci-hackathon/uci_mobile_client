@@ -1,14 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-import '../onboarding/sign_up.dart';
+import 'account_router.gr.dart';
 import 'apply_router.gr.dart';
 import 'balance.dart';
 import 'vote_router.gr.dart';
 
 export 'apply.dart';
+export 'nominates.dart';
 export 'uci_account_detail.dart';
-export 'vote.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -74,7 +74,9 @@ class _HomePageState extends State<HomePage> {
         ExtendedNavigator<ApplyRouter>(
           router: ApplyRouter(),
         ),
-        SignUpPage(),
+        ExtendedNavigator<AccountRouter>(
+          router: AccountRouter(),
+        ),
       ],
     );
   }

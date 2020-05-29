@@ -23,13 +23,14 @@ class UciAccountAdapter extends TypeAdapter<UciAccount> {
       ..lastName = fields[1] as String
       ..birthDate = fields[3] as DateTime
       ..email = fields[4] as String
-      ..links = (fields[5] as List)?.cast<String>();
+      ..links = (fields[5] as List)?.cast<String>()
+      ..avatar = fields[6] as String;
   }
 
   @override
   void write(BinaryWriter writer, UciAccount obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.firstName)
       ..writeByte(1)
@@ -41,6 +42,8 @@ class UciAccountAdapter extends TypeAdapter<UciAccount> {
       ..writeByte(4)
       ..write(obj.email)
       ..writeByte(5)
-      ..write(obj.links);
+      ..write(obj.links)
+      ..writeByte(6)
+      ..write(obj.avatar);
   }
 }

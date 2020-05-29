@@ -314,7 +314,7 @@ class UciApi {
 
   Future<List<String>> fetchCustodians() async {
     final data = await _eos.getTableRow('uci', 'uci', 'custodian');
-    return (data['nominations_list'] as List).cast<String>();
+    return (data['custodians_list'] as List).cast<String>();
   }
 
   Future<UciBalance> fetchUciBalance() async {
@@ -326,33 +326,45 @@ class UciApi {
     return UciBalance.fromJson(data);
   }
 
-  Future<List<Grant>> fetchGrants() async {
-    final data = await _eos.getTableRows('uci', 'uci', 'proposals', limit: 80);
+  Future<List<Grant>> fetchGrants([String accountName]) async {
+    accountName = accountName ?? await prefs.accountName();
+    final data = await _eos.getTableRows(
+      'uci',
+      'uci',
+      'proposals',
+      limit: 80,
+    );
 
-    print(data.first);
-    return data.map((e) => Grant.fromJson(e)).toList();
+    return data
+        .map((e) => Grant.fromJson(e))
+        .where((e) => e.proposer == accountName)
+        .toList();
   }
 
-  Future<List<Grant>> fetchAccountGrants(String accountName) async {
-    final data = await _eos.getTableRows('uci', 'uci', 'proposals', limit: 80, tableKey: 'proposer', lower: accountName);
-
-    print(data.first);
-    return data.map((e) => Grant.fromJson(e)).toList();
+  Future<List<String>> fetchVoters(String ballotName) async {
+    final data = await _eos.getTableRows('telos.decide', ballotName, 'voters');
+    return data.map((e) => e['voter']).toList().cast<String>();
   }
 
-  Future<List<String>> fetchVotedNominees(String accountName) async {
+  Future<List<String>> fetchVotedNominees() async {
+    final accountName = await prefs.accountName();
     final currentBallot = await _fetchCurrentBallot();
-    final data = await _eos.getTableRow('telos.decide', currentBallot, 'votes', lower: accountName);
+    final data = await _eos.getTableRow(
+      'telos.decide',
+      currentBallot,
+      'votes',
+      lower: accountName,
+    );
 
-    print(data);
+    if (data == null) {
+      return [];
+    }
 
-    final votedNominees = (data['weighted_votes'] as List).map((e) => e['key'] as String).toList();
+    final votedNominees = (data['weighted_votes'] as List)
+        .map((e) => e['key'] as String)
+        .toList();
 
     return votedNominees;
-  }
-
-  Future<List<eos.Holding>> fetchBalance(eos.Account account) {
-    return _eos.getCurrencyBalance('eosio.token', account.accountName);
   }
 
   Future<eos.Account> fetchAccountByName(String name) {

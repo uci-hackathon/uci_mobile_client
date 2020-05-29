@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Grant {
   Grant({
     this.amount,
@@ -11,8 +13,8 @@ class Grant {
   String team;
   String why;
   String proposer;
-  String ballot_name;
-  String proposal_id;
+  String ballotName;
+  int proposalId;
 
   Map<String, dynamic> body() {
     return {
@@ -23,12 +25,13 @@ class Grant {
   }
 
   Grant.fromJson(Map<String, dynamic> json) {
-    title = json['body']['title'];
-    team = json['body']['team'];
-    why = json['body']['why'];
+    final body = jsonDecode(json['body']);
+    title = body['title'];
+    team = body['team'];
+    why = body['why'];
     amount = json['amount_requested'];
     proposer = json['proposer'];
-    proposal_id = json['proposal_id'];
-    ballot_name = json['ballot_name'];
+    proposalId = json['proposal_id'];
+    ballotName = json['ballot_name'];
   }
 }
