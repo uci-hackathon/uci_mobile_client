@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:eosdart_ecc/eosdart_ecc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 
 part 'account.g.dart';
@@ -46,6 +48,9 @@ class UciAccount extends HiveObject {
   @HiveField(6)
   List<int> avatar;
 
+  ImageProvider get image =>
+      avatar != null ? MemoryImage(Uint8List.fromList(avatar)) : null;
+
   UciAccount.fromJson(Map<String, dynamic> json) {
     firstName = json['first_name'];
     lastName = json['last_name'];
@@ -60,6 +65,7 @@ class UciAccount extends HiveObject {
     links = (json['links'] ?? []).cast<String>();
 
     if (json['avatar'] != null) {
+      print('AVATAR FOUND ${json['avatar']}');
       avatar = base64Decode(json['avatar']).toList();
     }
   }

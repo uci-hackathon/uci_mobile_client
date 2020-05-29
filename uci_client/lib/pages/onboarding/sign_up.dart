@@ -168,12 +168,24 @@ class _SignUpPageState extends State<SignUpPage> {
       body: ListView(
         padding: const EdgeInsets.all(20.0),
         children: <Widget>[
-          Text(
-            !_isRegistered
-                ? 'Registration'
-                : 'Edit account\n${_uciAccount.username}',
-            style: Theme.of(context).textTheme.headline4,
-          ),
+          !_isRegistered
+              ? Text(
+                  'Registration',
+                  style: Theme.of(context).textTheme.headline4,
+                )
+              : Row(
+                  children: <Widget>[
+                    UciAvatar(
+                      image: _uciAccount.image,
+                      username: _uciAccount.username,
+                    ),
+                    SizedBox(width: 20),
+                    Text(
+                      'Edit account\n${_uciAccount.username}',
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                  ],
+                ),
           SizedBox(height: 20),
           FormBuilder(
             initialValue: _initialValue,

@@ -107,9 +107,20 @@ class _VotePageState extends State<VotePage> {
                 previousValue += element.isSelected ? 1 : 0);
         _buttonOpacity = selectedCount >= 1 ? 1.0 : 0.0;
       }),
-      title: Text(
-        custodian.username,
-        style: Theme.of(context).textTheme.headline6,
+      title: Row(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 20),
+            child: UciAvatar(
+              image: custodian.uciAccount?.image,
+              username: custodian.username,
+            ),
+          ),
+          Text(
+            custodian.username,
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ],
       ),
       subtitle: FlatButton(
         onPressed: () => ExtendedNavigator.of(context).pushNamed(

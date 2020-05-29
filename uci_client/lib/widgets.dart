@@ -39,3 +39,22 @@ class UciCard extends StatelessWidget {
     );
   }
 }
+
+class UciAvatar extends StatelessWidget {
+  final ImageProvider image;
+  final String username;
+
+  UciAvatar({this.image, this.username});
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      backgroundColor: Theme.of(context).accentColor,
+      child: Text(
+        username.substring(0, 2).toUpperCase(),
+        style: Theme.of(context).textTheme.headline6.apply(color: Colors.white),
+      ),
+      backgroundImage: image,
+    );
+  }
+}
