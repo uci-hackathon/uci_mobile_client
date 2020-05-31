@@ -287,9 +287,9 @@ class UciApi {
       ..actions = [_buildApplyForGrantAction(accountName, grant)]);
   }
 
-  Future<dynamic> nominateSelfAsCustodian() async {
+  Future<dynamic> nominateCustodian([String accountName]) async {
     await _prepareKeys();
-    final accountName = await prefs.accountName();
+    accountName = accountName ?? await prefs.accountName();
     return _eos.pushTransaction(eos.Transaction()
       ..actions = [
         _buildNominationAction(accountName),

@@ -50,6 +50,8 @@ class _ApplyForGrantPageState extends State<ApplyForGrantPage> {
               onPressed: _buttonOpacity > 0.0
                   ? () => _loaderKey.currentState.load(
                         () => _onApplyGrantPressed(context),
+                        successMessage: 'Grant submitted',
+                        errorMessage: 'Not enough vote tokens',
                       )
                   : null,
               child: Text(

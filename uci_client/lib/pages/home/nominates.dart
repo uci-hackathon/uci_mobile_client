@@ -26,9 +26,6 @@ class _NominatesPageState extends State<NominatesPage> {
     final voted = await api.fetchVotedNominees();
     setState(() {
       _isSubmitted = voted.isNotEmpty;
-      if (_isSubmitted) {
-        _buttonOpacity = 1.0;
-      }
     });
     return voted;
   }
@@ -65,10 +62,11 @@ class _NominatesPageState extends State<NominatesPage> {
               onPressed: _buttonOpacity > 0.0
                   ? () => _loaderKey.currentState.load(
                         _submitVotes,
+                        successMessage: 'Vote submitted',
                       )
                   : null,
               child: Text(
-                _isSubmitted ? 'Cancel vote' : 'Submit vote',
+                'Submit vote',
                 style: Theme.of(context).textTheme.button,
               ),
             ),

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 
 Widget uciAppBar() {
@@ -94,19 +97,37 @@ class LoadingPlaceholder extends StatefulWidget {
 
 class LoadingPlaceholderState extends State<LoadingPlaceholder> {
   var _isLoading = false;
+
   int get _index => _isLoading ? 1 : 0;
 
-  void load(Function loader) async {
+  void load(
+    Function loader, {
+    String successMessage,
+    String errorMessage,
+  }) async {
     try {
       setState(() => _isLoading = true);
       await loader();
+      if (successMessage != null) {
+        FlushbarHelper.createSuccess(message: successMessage)..show(context);
+      }
       setState(() => _isLoading = false);
     } catch (e) {
+      setState(() => _isLoading = false);
       print(e.toString());
       if (e is Error) {
         print(e.stackTrace.toString());
       }
-      setState(() => _isLoading = false);
+
+      // eosdart throws Strings
+      if (e is String) {
+        final data = jsonDecode(e.toString()) as Map<String, dynamic>;
+        var message = data['error']['details'][0]['message'] as String;
+        message = message.split(':').last;
+
+        FlushbarHelper.createError(message: errorMessage ?? message)
+          ..show(context);
+      }
     }
   }
 
