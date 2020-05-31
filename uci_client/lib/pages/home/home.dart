@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-import 'account_router.gr.dart';
-import 'apply_router.gr.dart';
+import 'account_router.gr.dart' as account;
+import 'apply_router.gr.dart' as apply;
 import 'balance.dart';
 import 'vote_router.gr.dart';
 
@@ -24,12 +24,6 @@ enum HomeTabs {
 
 class _HomePageState extends State<HomePage> {
   var _currentTab = 0;
-
-  @override
-  void initState() {
-    ExtendedNavigator<VoteRouter>(router: VoteRouter());
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,11 +65,11 @@ class _HomePageState extends State<HomePage> {
           router: VoteRouter(),
         ),
         BalancePage(),
-        ExtendedNavigator<ApplyRouter>(
-          router: ApplyRouter(),
+        ExtendedNavigator<apply.ApplyRouter>(
+          router: apply.ApplyRouter(),
         ),
-        ExtendedNavigator<AccountRouter>(
-          router: AccountRouter(),
+        ExtendedNavigator<account.AccountRouter>(
+          router: account.AccountRouter(),
         ),
       ],
     );

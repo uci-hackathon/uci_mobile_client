@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uci_client/repository/repository.dart';
 
+import '../../widgets.dart';
 import 'users.dart';
 
 class NominatesPage extends StatefulWidget {
@@ -11,25 +12,31 @@ class NominatesPage extends StatefulWidget {
 
 class _NominatesPageState extends State<NominatesPage> {
   var _buttonOpacity = 0.0;
-  var _isSubmitting = false;
+  var _isSubmitted = false;
   final _usersKey = GlobalKey<UsersState>();
+  final _loaderKey = GlobalKey<LoadingPlaceholderState>();
 
   Future<List<String>> _fetchNominates() {
     final api = Provider.of<UciApi>(context, listen: false);
     return api.fetchNominates();
   }
 
-  Future<List<String>> _fetchVoted() {
+  Future<List<String>> _fetchVoted() async {
     final api = Provider.of<UciApi>(context, listen: false);
-    return api.fetchVotedNominees();
+    final voted = await api.fetchVotedNominees();
+    setState(() {
+      _isSubmitted = voted.isNotEmpty;
+      if (_isSubmitted) {
+        _buttonOpacity = 1.0;
+      }
+    });
+    return voted;
   }
 
-  void _submitVotes() async {
-    setState(() {
-      _isSubmitting = true;
-    });
+  Future _submitVotes() async {
+    final api = Provider.of<UciApi>(context, listen: false);
 
-    await Provider.of<UciApi>(context, listen: false).submitVote(
+    await api.submitVote(
       _usersKey.currentState.users
           .where((c) => c.isSelected)
           .map((e) => e.username)
@@ -39,49 +46,53 @@ class _NominatesPageState extends State<NominatesPage> {
     _usersKey.currentState.setState(() {});
 
     setState(() {
-      _isSubmitting = false;
       _buttonOpacity = 0.0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: AnimatedOpacity(
-        duration: Duration(milliseconds: 400),
-        opacity: _buttonOpacity,
-        child: Container(
-          padding: EdgeInsets.all(20),
-          width: double.infinity,
-          child: _isSubmitting
-              ? LinearProgressIndicator()
-              : RaisedButton(
-                  onPressed: _buttonOpacity > 0.0 ? _submitVotes : null,
-                  child: Text(
-                    'Submit vote',
-                    style: Theme.of(context).textTheme.button,
-                  ),
-                ),
+    return LoadingPlaceholder(
+      key: _loaderKey,
+      child: Scaffold(
+        floatingActionButton: AnimatedOpacity(
+          duration: Duration(milliseconds: 400),
+          opacity: _buttonOpacity,
+          child: Container(
+            padding: EdgeInsets.all(20),
+            width: double.infinity,
+            child: UciButton(
+              onPressed: _buttonOpacity > 0.0
+                  ? () => _loaderKey.currentState.load(
+                        _submitVotes,
+                      )
+                  : null,
+              child: Text(
+                _isSubmitted ? 'Cancel vote' : 'Submit vote',
+                style: Theme.of(context).textTheme.button,
+              ),
+            ),
+          ),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      body: UsersPage(
-        title: Text(
-          'Vote for 8 custodians',
-          style: Theme.of(context).textTheme.headline4,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        body: UsersPage(
+          title: Text(
+            _isSubmitted ? 'Already voted' : 'Vote for 8 custodians',
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          votedUsers: _fetchVoted,
+          fetchUsers: _fetchNominates,
+          key: _usersKey,
+          onVote: (users) {
+            final selectedCount = users.fold(
+              0,
+              (previousValue, element) =>
+                  previousValue += element.isSelected ? 1 : 0,
+            );
+            _buttonOpacity = selectedCount >= 1 ? 1.0 : 0.0;
+            setState(() {});
+          },
         ),
-        votedUsers: _fetchVoted,
-        fetchUsers: _fetchNominates,
-        key: _usersKey,
-        onVote: (users) {
-          final selectedCount = users.fold(
-            0,
-            (previousValue, element) =>
-                previousValue += element.isSelected ? 1 : 0,
-          );
-          _buttonOpacity = selectedCount >= 1 ? 1.0 : 0.0;
-          setState(() {});
-        },
       ),
     );
   }

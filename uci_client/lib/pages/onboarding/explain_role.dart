@@ -62,22 +62,14 @@ class ExplainRolePage extends StatelessWidget {
               style: Theme.of(context).textTheme.subtitle1,
             ),
             Spacer(),
-            Container(
-              width: double.infinity,
-              child: RaisedButton(
-                elevation: 0.0,
-                hoverElevation: 0.0,
-                highlightElevation: 0.0,
-                focusElevation: 0.0,
-                disabledElevation: 0.0,
-                onPressed: () => ExtendedNavigator.rootNavigator.pushNamed(
-                  Routes.signUpPage,
-                  arguments: role,
-                ),
-                child: Text(
-                  vm.buttonTitle,
-                  style: Theme.of(context).textTheme.button,
-                ),
+            UciButton(
+              onPressed: () => ExtendedNavigator.rootNavigator.pushNamed(
+                Routes.signUpPage,
+                arguments: role,
+              ),
+              child: Text(
+                vm.buttonTitle,
+                style: Theme.of(context).textTheme.button,
               ),
             ),
             SizedBox(height: 20),

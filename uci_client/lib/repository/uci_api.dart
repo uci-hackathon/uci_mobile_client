@@ -169,6 +169,24 @@ class UciApi {
       };
   }
 
+  eos.Action _buildCancelVote(
+    String accountName,
+    String ballotName,
+  ) {
+    return eos.Action()
+      ..account = 'telos.decide'
+      ..name = 'unvoteall'
+      ..authorization = [
+        eos.Authorization()
+          ..actor = accountName
+          ..permission = 'owner'
+      ]
+      ..data = {
+        'voter': accountName,
+        'ballot_name': ballotName,
+      };
+  }
+
   eos.Action _buildUpsertMedadataAction(UciAccount uciAccount) {
     return eos.Action()
       ..account = 'uci'
@@ -288,6 +306,16 @@ class UciApi {
       ]);
   }
 
+  Future<dynamic> cancelVote([String ballotName]) async {
+    await _prepareKeys();
+    final accountName = await prefs.accountName();
+    ballotName = ballotName ?? await _fetchCurrentBallot();
+    return _eos.pushTransaction(eos.Transaction()
+      ..actions = [
+        _buildCancelVote(accountName, ballotName),
+      ]);
+  }
+
   Future<String> _fetchCurrentBallot() async {
     final data = await _eos.getTableRow('uci', 'uci', 'config');
     return data['current_election_ballot'];
@@ -299,6 +327,7 @@ class UciApi {
       'uci',
       'metadata',
       lower: accountName,
+      upper: accountName,
     );
 
     final json = jsonDecode(data['json']);
@@ -354,12 +383,14 @@ class UciApi {
       currentBallot,
       'votes',
       lower: accountName,
+      upper: accountName,
     );
 
     if (data == null) {
       return [];
     }
 
+    print(data);
     final votedNominees = (data['weighted_votes'] as List)
         .map((e) => e['key'] as String)
         .toList();

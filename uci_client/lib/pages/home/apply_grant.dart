@@ -20,89 +20,66 @@ class _ApplyForGrantModel {
 
 class _ApplyForGrantPageState extends State<ApplyForGrantPage> {
   final _fbKey = GlobalKey<FormBuilderState>();
+  final _loaderKey = GlobalKey<LoadingPlaceholderState>();
   var _buttonOpacity = 0.0;
-  var _isApplyingForGrant = false;
 
-  void _onApplyGrantPressed(BuildContext context) async {
-    setState(() {
-      _isApplyingForGrant = true;
-    });
-
-    try {
-      final api = Provider.of<UciApi>(context, listen: false);
-      final data = _fbKey.currentState.value;
-      await api.submitGrant(Grant(
-        amount: data[_ApplyForGrantModel.kAmount],
-        title: data[_ApplyForGrantModel.kTitle],
-        why: data[_ApplyForGrantModel.kWhy],
-        team: data[_ApplyForGrantModel.kTeam],
-      ));
-      ExtendedNavigator.of(context).pop();
-    } catch (e) {
-      print(e);
-      if (e is Error) {
-        print(e.stackTrace.toString());
-      }
-      setState(() {
-        _isApplyingForGrant = false;
-      });
-    }
+  Future _onApplyGrantPressed(BuildContext context) async {
+    final api = Provider.of<UciApi>(context, listen: false);
+    final data = _fbKey.currentState.value;
+    await api.submitGrant(Grant(
+      amount: data[_ApplyForGrantModel.kAmount],
+      title: data[_ApplyForGrantModel.kTitle],
+      why: data[_ApplyForGrantModel.kWhy],
+      team: data[_ApplyForGrantModel.kTeam],
+    ));
+    ExtendedNavigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: AnimatedOpacity(
-        duration: Duration(milliseconds: 400),
-        opacity: _buttonOpacity,
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(20.0),
-          child: _isApplyingForGrant
-              ? Container(
-                  color: Colors.black.withOpacity(0.5),
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        'This may take a while',
-                        style: Theme.of(context).textTheme.headline4,
-                      ),
-                      LinearProgressIndicator(),
-                    ],
-                  ),
-                )
-              : RaisedButton(
-                  onPressed: _buttonOpacity > 0.0
-                      ? () => _onApplyGrantPressed(context)
-                      : null,
-                  child: Text(
-                    'Apply',
-                    style: Theme.of(context).textTheme.button,
-                  ),
-                ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      appBar: uciAppBar(),
-      body: ListView(
-        padding: const EdgeInsets.all(20.0),
-        children: <Widget>[
-          Text(
-            'Apply for a grant',
-            style: Theme.of(context).textTheme.headline4,
-          ),
-          SizedBox(height: 20),
-          FormBuilder(
-            onChanged: (_) => setState(
-              () => _buttonOpacity = _fbKey.currentState.validate() ? 1.0 : 0.0,
+    return LoadingPlaceholder(
+      key: _loaderKey,
+      child: Scaffold(
+        floatingActionButton: AnimatedOpacity(
+          duration: Duration(milliseconds: 400),
+          opacity: _buttonOpacity,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20.0),
+            child: UciButton(
+              onPressed: _buttonOpacity > 0.0
+                  ? () => _loaderKey.currentState.load(
+                        () => _onApplyGrantPressed(context),
+                      )
+                  : null,
+              child: Text(
+                'Apply',
+                style: Theme.of(context).textTheme.button,
+              ),
             ),
-            key: _fbKey,
-            autovalidate: true,
-            child: _buildForm(),
           ),
-        ],
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        appBar: uciAppBar(),
+        body: ListView(
+          padding: const EdgeInsets.all(20.0),
+          children: <Widget>[
+            Text(
+              'Apply for a grant',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            SizedBox(height: 20),
+            FormBuilder(
+              onChanged: (_) => setState(
+                () =>
+                    _buttonOpacity = _fbKey.currentState.validate() ? 1.0 : 0.0,
+              ),
+              key: _fbKey,
+              autovalidate: true,
+              child: _buildForm(),
+            ),
+          ],
+        ),
       ),
     );
   }

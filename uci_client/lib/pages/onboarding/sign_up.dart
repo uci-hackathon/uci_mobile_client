@@ -59,9 +59,9 @@ class _SignUpViewModel {
 
 class _SignUpPageState extends State<SignUpPage> {
   final _fbKey = GlobalKey<FormBuilderState>();
+  final _loaderKey = GlobalKey<LoadingPlaceholderState>();
   var _buttonOpacity = 0.0;
   var _isUsernameFree = true;
-  var _isCreatingAccount = false;
 
   bool get _isRegistered => _uciAccount != null;
   UciAccount _uciAccount;
@@ -97,38 +97,24 @@ class _SignUpPageState extends State<SignUpPage> {
     return base64Encode(listBytes);
   }
 
-  void _onCreateAccountPressed(BuildContext context) async {
-    setState(() {
-      _isCreatingAccount = true;
-    });
+  Future _onCreateAccountPressed(BuildContext context) async {
+    final api = Provider.of<UciApi>(context, listen: false);
+    final value = _fbKey.currentState.value;
+    value[_SignUpViewModel.kLinks] = _transformLinks();
+    value[_SignUpViewModel.kAvatar] = await _transformAvatar();
+    final acc = UciAccount.fromJson(value);
 
-    try {
-      final api = Provider.of<UciApi>(context, listen: false);
-      final value = _fbKey.currentState.value;
-      value[_SignUpViewModel.kLinks] = _transformLinks();
-      value[_SignUpViewModel.kAvatar] = await _transformAvatar();
-      final acc = UciAccount.fromJson(value);
-
-      if (_isRegistered) {
-        _uciAccount = acc;
-        await api.updateAccount(acc);
-        setState(() {
-          _isCreatingAccount = false;
-        });
-        return;
-      }
-
-      await api.createAccount(acc);
-      ExtendedNavigator.of(context).pushNamed(Routes.homePage);
-    } catch (e) {
-      print(e);
-      if (e is Error) {
-        print(e.stackTrace.toString());
-      }
-      setState(() {
-        _isCreatingAccount = false;
-      });
+    if (_isRegistered) {
+      _uciAccount = acc;
+      await api.updateAccount(acc);
+      return;
     }
+
+    await api.createAccount(acc);
+    ExtendedNavigator.of(context).pushNamed(
+      Routes.homePage,
+      arguments: ModalRoute.of(context).settings.arguments,
+    );
   }
 
   @override
@@ -151,73 +137,64 @@ class _SignUpPageState extends State<SignUpPage> {
       );
     }
 
-    return Scaffold(
-      floatingActionButton: AnimatedOpacity(
-        duration: Duration(milliseconds: 400),
-        opacity: _buttonOpacity,
-        child: Container(
-          width: double.infinity,
+    return LoadingPlaceholder(
+      key: _loaderKey,
+      child: Scaffold(
+        floatingActionButton: AnimatedOpacity(
+          duration: Duration(milliseconds: 400),
+          opacity: _buttonOpacity,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20.0),
+            child: UciButton(
+              onPressed: _buttonOpacity > 0.0
+                  ? () => _loaderKey.currentState.load(
+                        () => _onCreateAccountPressed(context),
+                      )
+                  : null,
+              child: Text(
+                !_isRegistered ? 'Create account' : 'Edit',
+                style: Theme.of(context).textTheme.button,
+              ),
+            ),
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        appBar: uciAppBar(),
+        body: ListView(
           padding: const EdgeInsets.all(20.0),
-          child: _isCreatingAccount
-              ? Container(
-                  color: Colors.black.withOpacity(0.5),
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            !_isRegistered
+                ? Text(
+                    'Registration',
+                    style: Theme.of(context).textTheme.headline4,
+                  )
+                : Row(
                     children: <Widget>[
+                      UciAvatar(
+                        image: _uciAccount.image,
+                        username: _uciAccount.username,
+                      ),
+                      SizedBox(width: 20),
                       Text(
-                        'This may take a while',
+                        'Edit account\n${_uciAccount.username}',
                         style: Theme.of(context).textTheme.headline4,
                       ),
-                      LinearProgressIndicator(),
                     ],
                   ),
-                )
-              : RaisedButton(
-                  onPressed: _buttonOpacity > 0.0
-                      ? () => _onCreateAccountPressed(context)
-                      : null,
-                  child: Text(
-                    !_isRegistered ? 'Create account' : 'Edit',
-                    style: Theme.of(context).textTheme.button,
-                  ),
-                ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      appBar: uciAppBar(),
-      body: ListView(
-        padding: const EdgeInsets.all(20.0),
-        children: <Widget>[
-          !_isRegistered
-              ? Text(
-                  'Registration',
-                  style: Theme.of(context).textTheme.headline4,
-                )
-              : Row(
-                  children: <Widget>[
-                    UciAvatar(
-                      image: _uciAccount.image,
-                      username: _uciAccount.username,
-                    ),
-                    SizedBox(width: 20),
-                    Text(
-                      'Edit account\n${_uciAccount.username}',
-                      style: Theme.of(context).textTheme.headline4,
-                    ),
-                  ],
-                ),
-          SizedBox(height: 20),
-          FormBuilder(
-            initialValue: _initialValue,
-            onChanged: (_) => setState(
-              () => _buttonOpacity = _fbKey.currentState.validate() ? 1.0 : 0.0,
+            SizedBox(height: 20),
+            FormBuilder(
+              initialValue: _initialValue,
+              onChanged: (_) => setState(
+                () =>
+                    _buttonOpacity = _fbKey.currentState.validate() ? 1.0 : 0.0,
+              ),
+              key: _fbKey,
+              autovalidate: true,
+              child: _buildForm(),
             ),
-            key: _fbKey,
-            autovalidate: true,
-            child: _buildForm(),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

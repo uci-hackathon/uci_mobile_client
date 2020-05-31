@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../repository/models/models.dart';
+import '../../widgets.dart';
 
 class PickRolePage extends StatelessWidget {
   final Function onDone;
@@ -44,19 +45,11 @@ class PickRolePage extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: AccountType.values
-          .map((a) => Container(
-                width: double.infinity,
-                child: RaisedButton(
-                  disabledElevation: 0.0,
-                  focusElevation: 0.0,
-                  highlightElevation: 0.0,
-                  hoverElevation: 0.0,
-                  elevation: 0.0,
-                  onPressed: () => onDone(a),
-                  child: Text(
-                    captions[a],
-                    style: Theme.of(context).textTheme.button,
-                  ),
+          .map((a) => UciButton(
+                onPressed: () => onDone(a),
+                child: Text(
+                  captions[a],
+                  style: Theme.of(context).textTheme.button,
                 ),
               ))
           .toList(),
