@@ -10,57 +10,17 @@ class BalancePage extends StatefulWidget {
 
 class _BalancePageState extends State<BalancePage> {
   UciBalance _uciBalance;
-  var _isMinting = false;
-//  var _isStaking = false;
+  final _loaderKey = GlobalKey<LoadingPlaceholderState>();
 
-  void _mintToken() async {
-    try {
-      setState(() {
-        _isMinting = true;
-      });
+  Future _mintToken() async {
+    final q = 200;
+    await Provider.of<UciApi>(context, listen: false).mintUciTokens(q);
+    await Provider.of<UciApi>(context, listen: false).stakeUciTokens(100);
 
-      final q = 200;
-      await Provider.of<UciApi>(context, listen: false).mintUciTokens(q);
-      await Provider.of<UciApi>(context, listen: false).stakeUciTokens(100);
-
-      setState(() {
-        _uciBalance.liquid += 100;
-        _isMinting = false;
-      });
-    } catch (_) {
-      setState(() {
-        _isMinting = false;
-      });
-    }
+    setState(() {
+      _uciBalance.liquid += 100;
+    });
   }
-
-//  void _stakeToken({bool unstake = false}) async {
-//    try {
-//      setState(() {
-//        _isStaking = true;
-//      });
-//
-//      final q = 100;
-//      final api = Provider.of<UciApi>(context, listen: false);
-//      if (unstake) {
-//        await api.unstakeUciTokens(q);
-//        _uciBalance.liquid += q;
-//        _uciBalance.staked -= q;
-//      } else {
-//        await api.stakeUciTokens(q);
-//        _uciBalance.liquid -= q;
-//        _uciBalance.staked += q;
-//      }
-//
-//      setState(() {
-//        _isStaking = false;
-//      });
-//    } catch (_) {
-//      setState(() {
-//        _isStaking = false;
-//      });
-//    }
-//  }
 
   @override
   void initState() {
@@ -106,56 +66,21 @@ class _BalancePageState extends State<BalancePage> {
               Spacer(),
               Container(
                 width: double.infinity,
-                child: _isMinting
-                    ? LinearProgressIndicator()
-                    : UciButton(
-                        onPressed: _mintToken,
-                        child: Text(
-                          'Add',
-                          style: Theme.of(context).textTheme.button,
-                        ),
-                      ),
+                child: LoadingPlaceholder(
+                  type: LoaderType.embed,
+                  key: _loaderKey,
+                  child: UciButton(
+                    onPressed: () => _loaderKey.currentState.load(_mintToken),
+                    child: Text(
+                      'Add',
+                      style: Theme.of(context).textTheme.button,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
         ),
-        SizedBox(height: 20),
-//        UciCard(
-//          child: Column(
-//            crossAxisAlignment: CrossAxisAlignment.start,
-//            children: <Widget>[
-//              Text(
-//                'Staked:\n' + _uciBalance.staked.toStringAsFixed(1) + ' VOTE',
-//                style: Theme.of(context)
-//                    .textTheme
-//                    .headline3
-//                    .apply(color: Colors.white),
-//              ),
-//              Spacer(),
-//              _isStaking
-//                  ? LinearProgressIndicator()
-//                  : Row(
-//                      children: <Widget>[
-//                        RaisedButton(
-//                          onPressed: _stakeToken,
-//                          child: Text(
-//                            'Stake',
-//                            style: Theme.of(context).textTheme.button,
-//                          ),
-//                        ),
-//                        Spacer(),
-//                        RaisedButton(
-//                          onPressed: () => _stakeToken(unstake: true),
-//                          child: Text(
-//                            'Unstake',
-//                            style: Theme.of(context).textTheme.button,
-//                          ),
-//                        ),
-//                      ],
-//                    ),
-//            ],
-//          ),
-//        ),
         SizedBox(height: 20),
       ],
     );

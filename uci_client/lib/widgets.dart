@@ -85,11 +85,21 @@ class UciButton extends StatelessWidget {
   }
 }
 
+enum LoaderType {
+  fullScreen,
+  embed,
+}
+
 class LoadingPlaceholder extends StatefulWidget {
   final Widget child;
   final Key key;
+  final LoaderType type;
 
-  LoadingPlaceholder({this.child, this.key}) : super(key: key);
+  LoadingPlaceholder({
+    this.child,
+    this.key,
+    this.type = LoaderType.fullScreen,
+  }) : super(key: key);
 
   @override
   LoadingPlaceholderState createState() => LoadingPlaceholderState();
@@ -137,20 +147,22 @@ class LoadingPlaceholderState extends State<LoadingPlaceholder> {
       index: _index,
       children: <Widget>[
         widget.child,
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Spacer(),
-            Text(
-              'Transaction in progress...',
-              style: Theme.of(context).textTheme.headline3,
-              textAlign: TextAlign.center,
-            ),
-            Spacer(),
-            LinearProgressIndicator(),
-          ],
-        ),
+        widget.type == LoaderType.fullScreen
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Spacer(),
+                  Text(
+                    'Transaction in progress...',
+                    style: Theme.of(context).textTheme.headline3,
+                    textAlign: TextAlign.center,
+                  ),
+                  Spacer(),
+                  LinearProgressIndicator(),
+                ],
+              )
+            : LinearProgressIndicator(),
       ],
     );
   }

@@ -34,11 +34,21 @@ class UciAccountDetails extends StatelessWidget {
 
   List<Widget> _buildLinks(BuildContext context, UciAccount acc) {
     return acc.links.map((e) {
-      return FlatButton(
-        onPressed: () => launch(e),
-        child: Text(
-          e,
-          style: Theme.of(context).textTheme.button.apply(color: Colors.blue),
+      return Transform.translate(
+        offset: Offset(-15, 0),
+        child: Container(
+          alignment: Alignment.centerLeft,
+          child: FlatButton(
+            onPressed: () {
+              final uri = Uri.parse(e);
+              launch(Uri.https(uri.authority, uri.path).toString());
+            },
+            child: Text(
+              e,
+              style:
+                  Theme.of(context).textTheme.button.apply(color: Colors.blue),
+            ),
+          ),
         ),
       );
     }).toList();

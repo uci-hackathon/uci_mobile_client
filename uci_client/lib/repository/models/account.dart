@@ -11,7 +11,6 @@ enum AccountType { create, vote, nominate }
 class UciBalance {
   UciBalance.fromJson(Map<String, dynamic> json) {
     liquid = _parseSymbol(json['liquid']);
-    staked = _parseSymbol(json['staked']);
   }
 
   double _parseSymbol(String symbol) {
@@ -19,7 +18,6 @@ class UciBalance {
   }
 
   double liquid;
-  double staked;
 }
 
 @HiveType(typeId: 0)
