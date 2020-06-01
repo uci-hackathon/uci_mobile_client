@@ -50,7 +50,7 @@ class _ManageGrantsPageState extends State<ManageGrantsPage> {
     }
 
     return ListView.builder(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.only(top: 20),
       itemCount: _grants.length,
       itemBuilder: (_, index) {
         final g = _grants[index];

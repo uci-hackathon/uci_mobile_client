@@ -179,7 +179,7 @@ class UsersState extends State<UsersPage> {
             user.isFetchingDetails
                 ? Container()
                 : Text(
-                    user.uciAccount.firstName + ' ' + user.uciAccount.lastName,
+                    user.uciAccount.name ?? '',
                     style: Theme.of(context).textTheme.headline6,
                   ),
             Text(

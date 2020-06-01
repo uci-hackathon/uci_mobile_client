@@ -25,35 +25,39 @@ class UciAccount extends HiveObject {
   UciAccount({this.username});
 
   @HiveField(0)
-  String firstName;
+  String name;
 
   @HiveField(1)
-  String lastName;
-
-  @HiveField(2)
   String username;
 
-  @HiveField(3)
+  @HiveField(2)
   DateTime birthDate;
 
-  @HiveField(4)
+  @HiveField(3)
   String email;
 
-  @HiveField(5)
+  @HiveField(4)
   List<String> links;
 
-  @HiveField(6)
+  @HiveField(5)
   String avatar;
 
-  @HiveField(7)
+  @HiveField(6)
   String bio;
 
-  ImageProvider get image =>
-      avatar != null ? MemoryImage(base64Decode(avatar)) : null;
+  MemoryImage _cachedImage;
+
+  ImageProvider get image {
+    if (_cachedImage != null) {
+      return _cachedImage;
+    }
+
+    _cachedImage = avatar != null ? MemoryImage(base64Decode(avatar)) : null;
+    return _cachedImage;
+  }
 
   UciAccount.fromJson(Map<String, dynamic> json) {
-    firstName = json['first_name'];
-    lastName = json['last_name'];
+    name = json['name'];
     username = json['username'];
     bio = json['bio'];
 
@@ -72,8 +76,7 @@ class UciAccount extends HiveObject {
 
   Map<String, dynamic> toJson() {
     return {
-      'first_name': firstName,
-      'last_name': lastName,
+      'name': name,
       'username': username,
       'birth_date': birthDate?.toIso8601String(),
       'email': email,
@@ -85,7 +88,7 @@ class UciAccount extends HiveObject {
 
   @override
   String toString() {
-    return 'UciAccount: {firstName: $firstName, lastName: $lastName, username: $username, birthDate: $birthDate, email: $email, avatar: $avatar}';
+    return 'UciAccount: {name: $name, username: $username, birthDate: $birthDate, email: $email, avatar: $avatar}';
   }
 }
 

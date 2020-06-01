@@ -39,7 +39,7 @@ class UciAccountDetails extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              uciAccount.firstName + ' ' + uciAccount.lastName,
+              uciAccount.name ?? '',
               style: Theme.of(context).textTheme.headline4,
             ),
             Text(

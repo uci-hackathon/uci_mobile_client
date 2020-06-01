@@ -57,6 +57,31 @@ class _SignUpViewModel {
 
     return viewModel;
   }
+
+  static List<String> transformLinks(Map<String, dynamic> value) {
+    return List.generate(
+      _SignUpViewModel.linksCount,
+      (i) => (value[_SignUpViewModel.kLinks + (i + 1).toString()] ?? '')
+          .toString(),
+    ).where((l) => l.isNotEmpty).toList();
+  }
+
+  static Future<String> transformAvatar(List files) async {
+    if (files == null || files.isEmpty) {
+      return null;
+    }
+
+    File file = files.first;
+    Uint8List bytes = await file.readAsBytes();
+    final listBytes = await FlutterImageCompress.compressWithList(
+      bytes.toList(),
+      minHeight: 50,
+      minWidth: 50,
+      quality: 70,
+    );
+
+    return base64Encode(listBytes);
+  }
 }
 
 class _SignUpPageState extends State<SignUpPage> {
@@ -70,45 +95,19 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Map<String, dynamic> _initialValue;
 
-  List<String> _transformLinks() {
-    return List.generate(
-      _SignUpViewModel.linksCount,
-      (i) => (_fbKey.currentState
-                  .value[_SignUpViewModel.kLinks + (i + 1).toString()] ??
-              '')
-          .toString(),
-    ).where((l) => l.isNotEmpty).toList();
-  }
-
-  Future<String> _transformAvatar() async {
-    final avatar = _fbKey.currentState.value[_SignUpViewModel.kAvatar];
-    if (avatar == null || avatar.isEmpty) {
-      return null;
-    }
-
-    File file = avatar.first;
-    Uint8List bytes = await file.readAsBytes();
-    final listBytes = await FlutterImageCompress.compressWithList(
-      bytes.toList(),
-      minHeight: 50,
-      minWidth: 50,
-      quality: 70,
-      rotate: 135,
-    );
-
-    return base64Encode(listBytes);
-  }
-
   Future _onCreateAccountPressed(BuildContext context) async {
     final api = Provider.of<UciApi>(context, listen: false);
     final value = _fbKey.currentState.value;
-    value[_SignUpViewModel.kLinks] = _transformLinks();
-    value[_SignUpViewModel.kAvatar] = await _transformAvatar();
+    value[_SignUpViewModel.kLinks] = _SignUpViewModel.transformLinks(value);
+    value[_SignUpViewModel.kAvatar] = await _SignUpViewModel.transformAvatar(
+      value[_SignUpViewModel.kAvatar],
+    );
     final acc = UciAccount.fromJson(value);
 
     if (_isRegistered) {
       _uciAccount = acc;
       await api.updateAccount(acc);
+      setState(() {});
       return;
     }
 

@@ -10,7 +10,7 @@ class UciAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0.0,
       centerTitle: false,
       title: Container(
-        padding: EdgeInsets.only(left: 8),
+        padding: EdgeInsets.only(left: 5),
         height: kToolbarHeight - 5,
         child: Image.asset(
           'assets/app_bar.png',
@@ -60,11 +60,17 @@ class UciAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: radius,
-      backgroundColor: Theme.of(context).accentColor,
-      child: Text(
-        username.substring(0, 2).toUpperCase(),
-        style: Theme.of(context).textTheme.headline6.apply(color: Colors.white),
-      ),
+      backgroundColor:
+          image != null ? Colors.white : Theme.of(context).accentColor,
+      child: image != null
+          ? null
+          : Text(
+              username.substring(0, 2).toUpperCase(),
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  .apply(color: Colors.white),
+            ),
       backgroundImage: image,
     );
   }

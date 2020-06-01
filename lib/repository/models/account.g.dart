@@ -17,14 +17,14 @@ class UciAccountAdapter extends TypeAdapter<UciAccount> {
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return UciAccount(
-      username: fields[2] as String,
+      username: fields[1] as String,
     )
-      ..firstName = fields[0] as String
-      ..lastName = fields[1] as String
-      ..birthDate = fields[3] as DateTime
-      ..email = fields[4] as String
-      ..links = (fields[5] as List)?.cast<String>()
-      ..avatar = fields[6] as String;
+      ..name = fields[0] as String
+      ..birthDate = fields[2] as DateTime
+      ..email = fields[3] as String
+      ..links = (fields[4] as List)?.cast<String>()
+      ..avatar = fields[5] as String
+      ..bio = fields[6] as String;
   }
 
   @override
@@ -32,18 +32,18 @@ class UciAccountAdapter extends TypeAdapter<UciAccount> {
     writer
       ..writeByte(7)
       ..writeByte(0)
-      ..write(obj.firstName)
+      ..write(obj.name)
       ..writeByte(1)
-      ..write(obj.lastName)
-      ..writeByte(2)
       ..write(obj.username)
-      ..writeByte(3)
+      ..writeByte(2)
       ..write(obj.birthDate)
-      ..writeByte(4)
+      ..writeByte(3)
       ..write(obj.email)
-      ..writeByte(5)
+      ..writeByte(4)
       ..write(obj.links)
+      ..writeByte(5)
+      ..write(obj.avatar)
       ..writeByte(6)
-      ..write(obj.avatar);
+      ..write(obj.bio);
   }
 }
