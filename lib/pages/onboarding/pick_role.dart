@@ -45,11 +45,14 @@ class PickRolePage extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: AccountType.values
-          .map((a) => UciButton(
-                onPressed: () => onDone(a),
-                child: Text(
-                  captions[a],
-                  style: Theme.of(context).textTheme.button,
+          .map((a) => Padding(
+                padding: const EdgeInsets.only(bottom: 10.0),
+                child: UciButton(
+                  onPressed: () => onDone(a),
+                  child: Text(
+                    captions[a],
+                    style: Theme.of(context).textTheme.button,
+                  ),
                 ),
               ))
           .toList(),

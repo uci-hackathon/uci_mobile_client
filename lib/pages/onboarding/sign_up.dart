@@ -20,8 +20,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpViewModel {
-  static const kFirstName = 'first_name';
-  static const kLastName = 'last_name';
+  static const kName = 'name';
   static const kUsername = 'username';
   static const kBirthDate = 'birth_date';
   static const kEmail = 'email';
@@ -36,8 +35,7 @@ class _SignUpViewModel {
       _SignUpViewModel.kLinks + '1': 'test.com',
       _SignUpViewModel.kEmail: 'test@email.com',
       _SignUpViewModel.kBirthDate: DateTime.now(),
-      _SignUpViewModel.kLastName: 'test',
-      _SignUpViewModel.kFirstName: 'test',
+      _SignUpViewModel.kName: 'test',
     };
 
     if (acc != null) {
@@ -144,18 +142,20 @@ class _SignUpPageState extends State<SignUpPage> {
         floatingActionButton: AnimatedOpacity(
           duration: Duration(milliseconds: 400),
           opacity: _buttonOpacity,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20.0),
-            child: UciButton(
-              onPressed: _buttonOpacity > 0.0
-                  ? () => _loaderKey.currentState.load(
-                        () => _onCreateAccountPressed(context),
-                      )
-                  : null,
-              child: Text(
-                !_isRegistered ? 'Create account' : 'Edit',
-                style: Theme.of(context).textTheme.button,
+          child: SafeArea(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20.0),
+              child: UciButton(
+                onPressed: _buttonOpacity > 0.0
+                    ? () => _loaderKey.currentState.load(
+                          () => _onCreateAccountPressed(context),
+                        )
+                    : null,
+                child: Text(
+                  !_isRegistered ? 'Create account' : 'Edit',
+                  style: Theme.of(context).textTheme.button,
+                ),
               ),
             ),
           ),
@@ -173,6 +173,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 : Row(
                     children: <Widget>[
                       UciAvatar(
+                        radius: 40,
                         image: _uciAccount.image,
                         username: _uciAccount.username,
                       ),
@@ -225,23 +226,9 @@ class _SignUpPageState extends State<SignUpPage> {
           cursorColor: Colors.black,
           maxLines: 1,
           autocorrect: false,
-          attribute: _SignUpViewModel.kFirstName,
+          attribute: _SignUpViewModel.kName,
           decoration: InputDecoration(
-            labelText: 'First name *',
-          ),
-          validators: [
-            FormBuilderValidators.required(),
-            FormBuilderValidators.max(70),
-          ],
-        ),
-        SizedBox(height: 20),
-        FormBuilderTextField(
-          cursorColor: Colors.black,
-          maxLines: 1,
-          autocorrect: false,
-          attribute: _SignUpViewModel.kLastName,
-          decoration: InputDecoration(
-            labelText: 'Last name *',
+            labelText: 'Name *',
           ),
           validators: [
             FormBuilderValidators.required(),
