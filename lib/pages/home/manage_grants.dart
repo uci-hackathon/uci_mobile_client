@@ -63,10 +63,11 @@ class _ManageGrantsPageState extends State<ManageGrantsPage> {
             g.title,
             style: Theme.of(context).textTheme.headline6,
           ),
-          trailing: Text(
-            g.amount,
-            style: Theme.of(context).textTheme.headline6,
+          subtitle: Text(
+            g.amountFormatted,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
+          trailing: Icon(Icons.arrow_forward_ios),
         );
       },
     );

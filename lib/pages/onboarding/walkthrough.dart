@@ -13,7 +13,7 @@ class WalkthroughPage extends StatelessWidget {
 
     return [
       PageViewModel(
-        title: 'Universal Creator Income',
+        title: 'Universal Creative Income',
         body:
             'An alternative economic infrastructure to fund creators who produce the beauty in our world.',
         image: Center(

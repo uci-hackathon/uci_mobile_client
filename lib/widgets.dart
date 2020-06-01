@@ -6,31 +6,22 @@ import 'package:flutter/material.dart';
 class UciAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
-      child: AppBar(
-        elevation: 0.0,
-        centerTitle: false,
-        title: Row(
-          children: <Widget>[
-            SizedBox(width: 5),
-            Image.asset(
-              'assets/uci.png',
-              width: 50,
-            ),
-            SizedBox(width: 10),
-            Text(
-              'Universal Creator\nincome',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-          ],
+    return AppBar(
+      elevation: 0.0,
+      centerTitle: false,
+      title: Container(
+        padding: EdgeInsets.only(left: 8),
+        height: kToolbarHeight - 5,
+        child: Image.asset(
+          'assets/app_bar.png',
+          fit: BoxFit.contain,
         ),
       ),
     );
   }
 
   @override
-  Size get preferredSize => Size(double.infinity, kToolbarHeight + 20);
+  Size get preferredSize => Size(double.infinity, kToolbarHeight);
 }
 
 class UciCard extends StatelessWidget {
@@ -89,6 +80,7 @@ class UciButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
+      height: 40,
       child: RaisedButton(
         elevation: 0,
         disabledElevation: 0,

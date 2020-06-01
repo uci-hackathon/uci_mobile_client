@@ -21,7 +21,7 @@ class _ExplainRoleViewModel {
           title: 'Apply for a\nGrant',
           buttonTitle: 'Apply now',
           description:
-              'Support your creative processes with community-allocated grants, accessible globally with a digital Universal Creator’s account.',
+              'Support your creative processes with community-allocated grants, accessible globally with a digital Universal Creatives account.',
         ),
         AccountType.vote: _ExplainRoleViewModel(
           title: 'Vote for\nInfluence',

@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                   height: 30,
                 ),
                 title: Text(
-                  '_',
+                  '',
                   style: Theme.of(context).textTheme.headline3.copyWith(
                         color: Theme.of(context).accentColor,
                         height: 0.2,

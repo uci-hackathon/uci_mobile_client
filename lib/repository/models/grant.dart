@@ -16,6 +16,8 @@ class Grant {
   String ballotName;
   int proposalId;
 
+  String get amountFormatted => amount.split(' ').first + ' USD';
+
   Map<String, dynamic> body() {
     return {
       'title': title,

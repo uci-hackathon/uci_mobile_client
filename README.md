@@ -1,16 +1,21 @@
 # uci_client
 
-A new Flutter project.
+Universal Creative income
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Flutter app for UCi
 
-A few resources to get you started if this is your first Flutter project:
+An alternative economic infrastructure to fund creators who produce the beauty in our world.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+# Empowering creators worldwide
+Creativity is key to advancement of humanity and we need to foster innovation across borders.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# A Decentralized Organization
+Neutrality and transparency in governance to offer more fair and distributed forms of curation.
+
+
+# Technical overview
+- UCi stores private keys in keychain for iOS / AES encrypted storage for Android (Future plans - use an external wallet)
+- Transactions are signed using those keys (Future - use greymass ESR or similar tech)
+- Hive is used for caching critical data

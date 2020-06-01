@@ -97,7 +97,7 @@ class _ApplyForGrantPageState extends State<ApplyForGrantPage> {
           attribute: _ApplyForGrantModel.kAmount,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
-            labelText: 'Amount *',
+            labelText: 'Amount (USD) *',
           ),
           validators: [
             FormBuilderValidators.required(),
@@ -137,7 +137,7 @@ class _ApplyForGrantPageState extends State<ApplyForGrantPage> {
           autocorrect: false,
           attribute: _ApplyForGrantModel.kWhy,
           decoration: InputDecoration(
-            labelText: 'How this grant will help you',
+            labelText: 'How will this grant help you?',
           ),
           validators: [
             FormBuilderValidators.max(70),
