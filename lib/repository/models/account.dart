@@ -45,6 +45,9 @@ class UciAccount extends HiveObject {
   @HiveField(6)
   String avatar;
 
+  @HiveField(7)
+  String bio;
+
   ImageProvider get image =>
       avatar != null ? MemoryImage(base64Decode(avatar)) : null;
 
@@ -52,6 +55,7 @@ class UciAccount extends HiveObject {
     firstName = json['first_name'];
     lastName = json['last_name'];
     username = json['username'];
+    bio = json['bio'];
 
     final bd = json['birth_date'];
     if (bd != null) {
@@ -75,6 +79,7 @@ class UciAccount extends HiveObject {
       'email': email,
       'links': links,
       'avatar': avatar,
+      'bio': bio,
     };
   }
 

@@ -9,26 +9,46 @@ class UciAccountDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     UciAccount uciAccount = ModalRoute.of(context).settings.arguments;
     return Scaffold(
-      appBar: uciAppBar(),
+      appBar: UciAppBar(),
       body: ListView(
         padding: const EdgeInsets.all(20.0),
         children: <Widget>[
           SizedBox(height: 20),
+          _profileHeader(context, uciAccount),
+          SizedBox(height: 20),
           Text(
-            uciAccount.username,
-            style: Theme.of(context).textTheme.headline4,
+            uciAccount.bio ?? '',
+            style: Theme.of(context).textTheme.bodyText2,
           ),
-          SizedBox(height: 20),
-          Row(
-            children: <Widget>[
-              Text(uciAccount.firstName),
-              Text(uciAccount.lastName)
-            ],
-          ),
-          SizedBox(height: 20),
           ..._buildLinks(context, uciAccount)
         ],
       ),
+    );
+  }
+
+  Widget _profileHeader(BuildContext context, UciAccount uciAccount) {
+    return Row(
+      children: <Widget>[
+        UciAvatar(
+          radius: 40,
+          image: uciAccount.image,
+          username: uciAccount.username,
+        ),
+        SizedBox(width: 20),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              uciAccount.firstName + ' ' + uciAccount.lastName,
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            Text(
+              '@${uciAccount.username}',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+          ],
+        ),
+      ],
     );
   }
 

@@ -44,7 +44,7 @@ class ExplainRolePage extends StatelessWidget {
     final AccountType role = ModalRoute.of(context).settings.arguments;
     final vm = _ExplainRoleViewModel.resolve(role);
     return Scaffold(
-      appBar: uciAppBar(),
+      appBar: UciAppBar(),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(

@@ -35,7 +35,7 @@ class _BalancePageState extends State<BalancePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: uciAppBar(),
+      appBar: UciAppBar(),
       body: _buildBody(),
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'account_router.gr.dart' as account;
 import 'apply_router.gr.dart' as apply;
 import 'balance.dart';
+import 'shop.dart';
 import 'vote_router.gr.dart';
 
 export 'apply.dart';
@@ -19,11 +20,20 @@ enum HomeTabs {
   vote,
   wallet,
   apply,
+  shop,
   account,
 }
 
 class _HomePageState extends State<HomePage> {
   var _currentTab = 0;
+
+  List<String> _bottomIcons = [
+    'assets/vote.png',
+    'assets/wallet.png',
+    'assets/add.png',
+    'assets/shop.png',
+    'assets/account.png',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -35,24 +45,24 @@ class _HomePageState extends State<HomePage> {
         selectedIconTheme: IconThemeData(color: Colors.black),
         currentIndex: _currentTab,
         onTap: (i) => setState(() => _currentTab = i),
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment_turned_in),
-            title: Text('vote'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.monetization_on),
-            title: Text('wallet'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle),
-            title: Text('apply'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            title: Text('account'),
-          ),
-        ],
+        items: _bottomIcons
+            .map(
+              (i) => BottomNavigationBarItem(
+                icon: Image.asset(
+                  i,
+                  width: 30,
+                  height: 30,
+                ),
+                title: Text(
+                  '_',
+                  style: Theme.of(context).textTheme.headline3.copyWith(
+                        color: Theme.of(context).accentColor,
+                        height: 0.2,
+                      ),
+                ),
+              ),
+            )
+            .toList(),
       ),
     );
   }
@@ -68,6 +78,7 @@ class _HomePageState extends State<HomePage> {
         ExtendedNavigator<apply.ApplyRouter>(
           router: apply.ApplyRouter(),
         ),
+        ShopPage(),
         ExtendedNavigator<account.AccountRouter>(
           router: account.AccountRouter(),
         ),

@@ -29,7 +29,7 @@ class _ManageGrantsPageState extends State<ManageGrantsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: uciAppBar(),
+      appBar: UciAppBar(),
       body: _buildBody(),
     );
   }

@@ -22,7 +22,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: uciAppBar(),
+      appBar: UciAppBar(),
       body: IndexedStack(
         index: _pageIndex,
         children: <Widget>[

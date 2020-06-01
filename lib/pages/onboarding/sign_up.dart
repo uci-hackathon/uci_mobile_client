@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -26,6 +27,7 @@ class _SignUpViewModel {
   static const kEmail = 'email';
   static const kLinks = 'links';
   static const kAvatar = 'avatar';
+  static const kBio = 'bio';
 
   static const linksCount = 4;
 
@@ -160,7 +162,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        appBar: uciAppBar(),
+        appBar: UciAppBar(),
         body: ListView(
           padding: const EdgeInsets.all(20.0),
           children: <Widget>[
@@ -281,6 +283,18 @@ class _SignUpPageState extends State<SignUpPage> {
                   (_) => _isUsernameFree ? null : 'Username is taken',
                 ],
               ),
+        SizedBox(height: 20),
+        FormBuilderTextField(
+          cursorColor: Colors.black,
+          autocorrect: false,
+          attribute: _SignUpViewModel.kBio,
+          decoration: InputDecoration(
+            labelText: 'Bio',
+          ),
+          validators: [
+            FormBuilderValidators.max(100),
+          ],
+        ),
         SizedBox(height: 20),
         Theme(
           data: ThemeData(

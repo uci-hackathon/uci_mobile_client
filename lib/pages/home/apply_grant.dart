@@ -62,7 +62,7 @@ class _ApplyForGrantPageState extends State<ApplyForGrantPage> {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        appBar: uciAppBar(),
+        appBar: UciAppBar(),
         body: ListView(
           padding: const EdgeInsets.all(20.0),
           children: <Widget>[

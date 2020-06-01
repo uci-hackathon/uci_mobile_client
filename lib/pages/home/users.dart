@@ -74,7 +74,7 @@ class UsersState extends State<UsersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: uciAppBar(),
+      appBar: UciAppBar(),
       body: Column(
         children: <Widget>[
           SizedBox(height: 20),
@@ -107,7 +107,7 @@ class UsersState extends State<UsersPage> {
     }
 
     return ListView.builder(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.only(left: 5),
       itemCount: users.length,
       itemBuilder: (_, index) => _buildUserTile(
         users[index],
@@ -124,6 +124,7 @@ class UsersState extends State<UsersPage> {
     }
 
     return CheckboxListTile(
+      isThreeLine: true,
       value: user.isSelected,
       onChanged: (val) {
         if (canVote) {
@@ -139,23 +140,26 @@ class UsersState extends State<UsersPage> {
   }
 
   Widget _buildUserSubtitle(_UserViewModel user) {
-    return FlatButton(
-      onPressed: () => ExtendedNavigator.of(context).pushNamed(
-        Routes.uciAccountDetails,
-        arguments: user.uciAccount,
-      ),
-      child: user.isFetchingDetails
-          ? LinearProgressIndicator()
-          : Container(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Review >',
-                style: Theme.of(context).textTheme.caption.copyWith(
-                      color: Colors.blueAccent,
-                      fontWeight: FontWeight.bold,
-                    ),
+    return Transform.translate(
+      offset: Offset(-15, 0),
+      child: FlatButton(
+        onPressed: () => ExtendedNavigator.of(context).pushNamed(
+          Routes.uciAccountDetails,
+          arguments: user.uciAccount,
+        ),
+        child: user.isFetchingDetails
+            ? LinearProgressIndicator()
+            : Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Review >',
+                  style: Theme.of(context).textTheme.caption.copyWith(
+                        color: Colors.blueAccent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
               ),
-            ),
+      ),
     );
   }
 
@@ -169,9 +173,20 @@ class UsersState extends State<UsersPage> {
             username: user.username,
           ),
         ),
-        Text(
-          user.username,
-          style: Theme.of(context).textTheme.headline6,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            user.isFetchingDetails
+                ? Container()
+                : Text(
+                    user.uciAccount.firstName + ' ' + user.uciAccount.lastName,
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+            Text(
+              '@${user.username}',
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+          ],
         ),
       ],
     );

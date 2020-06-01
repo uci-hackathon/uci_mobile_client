@@ -19,7 +19,7 @@ class _ApplyPageState extends State<ApplyPage> {
     return LoadingPlaceholder(
       key: _loaderKey,
       child: Scaffold(
-        appBar: uciAppBar(),
+        appBar: UciAppBar(),
         body: ListView(
           padding: EdgeInsets.all(20),
           children: <Widget>[

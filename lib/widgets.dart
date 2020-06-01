@@ -3,28 +3,44 @@ import 'dart:convert';
 import 'package:flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 
-Widget uciAppBar() {
-  return AppBar(
-    elevation: 0.0,
-    centerTitle: false,
-    title: Row(
-      children: <Widget>[
-        Image.asset(
-          'assets/uci.png',
-          width: 50,
+class UciAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0),
+      child: AppBar(
+        elevation: 0.0,
+        centerTitle: false,
+        title: Row(
+          children: <Widget>[
+            SizedBox(width: 5),
+            Image.asset(
+              'assets/uci.png',
+              width: 50,
+            ),
+            SizedBox(width: 10),
+            Text(
+              'Universal Creator\nincome',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+          ],
         ),
-        SizedBox(width: 10),
-        Text('Universal Creator\nincome'),
-      ],
-    ),
-  );
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => Size(double.infinity, kToolbarHeight + 20);
 }
 
 class UciCard extends StatelessWidget {
   final Widget child;
   final Function onPressed;
 
-  UciCard({this.child, this.onPressed});
+  UciCard({
+    this.child,
+    this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +49,6 @@ class UciCard extends StatelessWidget {
       onTap: onPressed,
       child: Card(
         child: Container(
-          width: double.infinity,
           height: h * 0.3,
           padding: EdgeInsets.all(20),
           child: child,
@@ -46,12 +61,14 @@ class UciCard extends StatelessWidget {
 class UciAvatar extends StatelessWidget {
   final ImageProvider image;
   final String username;
+  final double radius;
 
-  UciAvatar({this.image, this.username});
+  UciAvatar({this.image, this.username, this.radius});
 
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
+      radius: radius,
       backgroundColor: Theme.of(context).accentColor,
       child: Text(
         username.substring(0, 2).toUpperCase(),

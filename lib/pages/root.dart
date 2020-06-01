@@ -46,7 +46,7 @@ class _RootPageState extends State<RootPage> {
 
       case _RootState.loading:
         return Scaffold(
-          appBar: uciAppBar(),
+          appBar: UciAppBar(),
           body: Center(
             child: CircularProgressIndicator(),
           ),
